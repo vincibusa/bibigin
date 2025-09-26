@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Minus, Plus, X, ShoppingBag, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 
@@ -45,28 +45,21 @@ export function CartDrawer({
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="right" 
-        className="w-full sm:w-[400px] bg-navy/95 backdrop-blur-md border-secondary/20 text-secondary"
+        className="w-full sm:w-[400px] bg-navy/95 backdrop-blur-md border-secondary/20 text-secondary px-6"
       >
         <SheetHeader className="pb-6">
-          <SheetTitle className="flex items-center justify-between text-secondary">
-            <div className="flex items-center space-x-2">
-              <ShoppingBag className="w-5 h-5 text-gold" />
-              <span className="font-playfair text-xl">Carrello</span>
-              {totalItems > 0 && (
-                <Badge className="bg-gold text-navy border-0">
-                  {totalItems}
-                </Badge>
-              )}
-            </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClose}
-              className="text-secondary hover:text-gold hover:bg-gold/10"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+          <SheetTitle className="flex items-center space-x-2 text-secondary">
+            <ShoppingBag className="w-5 h-5 text-gold" />
+            <span className="font-playfair text-xl">Carrello</span>
+            {totalItems > 0 && (
+              <Badge className="bg-gold text-navy border-0">
+                {totalItems}
+              </Badge>
+            )}
           </SheetTitle>
+          <SheetDescription className="text-secondary/70">
+            {totalItems === 0 ? 'Il tuo carrello è vuoto' : `${totalItems} ${totalItems === 1 ? 'prodotto' : 'prodotti'} nel carrello`}
+          </SheetDescription>
         </SheetHeader>
 
         {items.length === 0 ? (

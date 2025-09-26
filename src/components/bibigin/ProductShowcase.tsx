@@ -18,6 +18,21 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
     transition: { duration: 0.6, ease: "easeOut" }
   }
 
+  // Generate deterministic star positions
+  const generateStarPositions = (count: number) => {
+    const positions = []
+    for (let i = 0; i < count; i++) {
+      const x = (i * 23 + 13) % 100
+      const y = (i * 29 + 37) % 100  
+      const duration = 3 + (i % 2)
+      const delay = (i * 0.4) % 2
+      positions.push({ x, y, duration, delay })
+    }
+    return positions
+  }
+
+  const starPositions = generateStarPositions(30)
+
   const botanicals = [
     'Ginepro Toscano', 'Coriandolo', 'Angelica', 'Iris',
     'Cardamomo', 'Cannella', 'Scorza di Limone', 'Lavanda',
@@ -35,22 +50,22 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
     <section id="product" className="py-20 bg-cosmic-gradient relative overflow-hidden">
       {/* Animated Stars Background */}
       <div className="absolute inset-0">
-        {[...Array(30)].map((_, i) => (
+        {starPositions.map((star, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-star rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${star.x}%`,
+              top: `${star.y}%`,
             }}
             animate={{
               opacity: [0.2, 0.8, 0.2],
               scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: star.duration,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: star.delay,
             }}
           />
         ))}

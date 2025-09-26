@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowDown } from 'lucide-react'
+// ArrowDown removed as it's not used
 import { Button } from '@/components/ui/button'
 
 interface HeroProps {
@@ -24,26 +24,42 @@ export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
     }
   }
 
+  // Generate deterministic star positions to avoid hydration mismatch
+  const generateStarPositions = (count: number) => {
+    const positions = []
+    for (let i = 0; i < count; i++) {
+      // Use deterministic calculation based on index
+      const x = (i * 17 + 23) % 100
+      const y = (i * 31 + 47) % 100
+      const duration = 2 + (i % 3)
+      const delay = (i * 0.3) % 2
+      positions.push({ x, y, duration, delay })
+    }
+    return positions
+  }
+
+  const starPositions = generateStarPositions(50)
+
   return (
     <section className="relative min-h-screen bg-cosmic-gradient overflow-hidden">
       {/* Animated Stars Background */}
       <div className="absolute inset-0">
-        {[...Array(50)].map((_, i) => (
+        {starPositions.map((star, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-star rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${star.x}%`,
+              top: `${star.y}%`,
             }}
             animate={{
               opacity: [0.3, 1, 0.3],
               scale: [0.8, 1.2, 0.8],
             }}
             transition={{
-              duration: 2 + Math.random() * 2,
+              duration: star.duration,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: star.delay,
             }}
           />
         ))}

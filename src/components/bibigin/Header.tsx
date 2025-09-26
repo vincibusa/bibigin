@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ShoppingBag, Menu, X } from 'lucide-react'
+import { ShoppingBag, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 
 interface HeaderProps {
@@ -85,26 +85,34 @@ export function Header({ cartItemsCount = 0, onCartOpen }: HeaderProps) {
                 <Menu className="h-4 w-4 transition-transform duration-300 hover:scale-110" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] sm:w-[300px]">
-              <div className="flex items-center space-x-2 mb-6">
-                <Image
-                  src="/logo.png"
-                  alt="BibiGin Logo"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
-                <span className="font-playfair text-xl font-bold text-navy">
-                  BibiGin
-                </span>
-              </div>
-              <nav className="flex flex-col space-y-4">
+            <SheetContent 
+              side="right" 
+              className="w-[280px] sm:w-[300px] bg-navy/95 backdrop-blur-md border-secondary/20 text-secondary px-6"
+            >
+              <SheetHeader>
+                <SheetTitle className="flex items-center space-x-2 text-secondary">
+                  <Image
+                    src="/logo.png"
+                    alt="BibiGin Logo"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                  <span className="font-playfair text-xl font-bold">
+                    BibiGin
+                  </span>
+                </SheetTitle>
+                <SheetDescription className="text-secondary/70">
+                  Naviga nel mondo del gin artigianale
+                </SheetDescription>
+              </SheetHeader>
+              <nav className="flex flex-col space-y-4 mt-6">
                 {navItems.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-lg font-medium text-navy hover:text-gold transition-colors"
+                    className="text-lg font-medium text-secondary hover:text-gold transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-gold/10"
                   >
                     {item.name}
                   </a>

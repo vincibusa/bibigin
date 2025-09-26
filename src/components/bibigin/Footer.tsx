@@ -12,6 +12,21 @@ export function Footer() {
     transition: { duration: 0.6, ease: "easeOut" }
   }
 
+  // Generate deterministic star positions
+  const generateStarPositions = (count: number) => {
+    const positions = []
+    for (let i = 0; i < count; i++) {
+      const x = (i * 13 + 67) % 100
+      const y = (i * 43 + 17) % 100
+      const duration = 5 + (i % 3)
+      const delay = (i * 0.7) % 3
+      positions.push({ x, y, duration, delay })
+    }
+    return positions
+  }
+
+  const starPositions = generateStarPositions(20)
+
   const socialLinks = [
     { icon: Instagram, href: '#', name: 'Instagram' },
     { icon: Facebook, href: '#', name: 'Facebook' },
@@ -30,22 +45,22 @@ export function Footer() {
     <footer id="contact" className="bg-cosmic-gradient relative overflow-hidden">
       {/* Animated Stars Background */}
       <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
+        {starPositions.map((star, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-star rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${star.x}%`,
+              top: `${star.y}%`,
             }}
             animate={{
               opacity: [0.1, 0.5, 0.1],
               scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: 5 + Math.random() * 3,
+              duration: star.duration,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: star.delay,
             }}
           />
         ))}
@@ -76,7 +91,7 @@ export function Footer() {
             
             <p className="text-secondary/80 leading-relaxed mb-6 max-w-md">
               Gin delle Fasi Lunari - Un distillato artigianale premium che cattura 
-              l'essenza dell'astronomia in ogni sorso. Prodotto con passione sotto 
+              l&apos;essenza dell&apos;astronomia in ogni sorso. Prodotto con passione sotto 
               il cielo stellato toscano.
             </p>
 

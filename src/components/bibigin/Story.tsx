@@ -19,6 +19,21 @@ export function Story() {
     }
   }
 
+  // Generate deterministic star positions
+  const generateStarPositions = (count: number) => {
+    const positions = []
+    for (let i = 0; i < count; i++) {
+      const x = (i * 19 + 11) % 100
+      const y = (i * 37 + 53) % 100
+      const duration = 3 + (i % 2)
+      const delay = (i * 0.5) % 2
+      positions.push({ x, y, duration, delay })
+    }
+    return positions
+  }
+
+  const starPositions = generateStarPositions(30)
+
   const moonPhases = [
     { name: 'Luna Nuova', icon: '🌑', description: 'Inizio del processo, raccolta dei botanici' },
     { name: 'Primo Quarto', icon: '🌓', description: 'Macerazione delle erbe aromatiche' },
@@ -30,22 +45,22 @@ export function Story() {
     <section id="story" className="py-20 bg-navy-gradient relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0">
-        {[...Array(30)].map((_, i) => (
+        {starPositions.map((star, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-star rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${star.x}%`,
+              top: `${star.y}%`,
             }}
             animate={{
               opacity: [0.2, 0.8, 0.2],
               scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: star.duration,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: star.delay,
             }}
           />
         ))}
@@ -146,8 +161,8 @@ export function Story() {
             variants={fadeInUp}
             className="text-2xl md:text-3xl font-playfair italic text-secondary/90 max-w-3xl mx-auto leading-relaxed"
           >
-            "Come le fasi lunari influenzano le maree, così il nostro gin cattura 
-            l&apos;essenza di ogni momento celeste in ogni sorso."
+            &ldquo;Come le fasi lunari influenzano le maree, così il nostro gin cattura 
+            l&apos;essenza di ogni momento celeste in ogni sorso.&rdquo;
             <footer className="text-lg text-gold mt-6 not-italic">
               — Maestro Distillatore BibiGin
             </footer>

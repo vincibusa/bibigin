@@ -8,7 +8,7 @@ import {
   Timestamp
 } from 'firebase/firestore'
 import { db } from './firebase'
-import { Order, CartItem, ShippingAddress, Customer } from './types'
+import { Order, CartItem, ShippingAddress, Customer, Address } from './types'
 
 // Constants
 const ORDERS_COLLECTION = 'orders'
@@ -92,6 +92,15 @@ export async function createOrder(
     // Create or update customer
     const customerId = await createOrUpdateCustomer(customerEmail, shipping)
     
+    // Convert ShippingAddress to Address format for gestionale compatibility
+    const addressData: Address = {
+      street: shipping.street,
+      city: shipping.city,
+      state: shipping.city, // Use city as state for Italy
+      postalCode: shipping.postalCode,
+      country: shipping.country
+    }
+    
     // Prepare order data
     const orderData: Omit<Order, 'id'> = {
       customerId,
@@ -99,11 +108,15 @@ export async function createOrder(
       items: items.map(item => ({
         productId: item.productId,
         name: item.name,
+        productName: item.name, // For gestionale compatibility
         price: item.price,
         quantity: item.quantity,
+        total: item.price * item.quantity, // For gestionale compatibility
         image: item.image
       })),
       shipping,
+      shippingAddress: addressData, // For gestionale compatibility
+      billingAddress: addressData, // Same as shipping for now
       subtotal,
       shipping_cost,
       total,

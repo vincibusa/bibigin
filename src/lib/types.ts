@@ -61,8 +61,10 @@ export interface Customer {
 export interface OrderItem {
   productId: string
   name: string
+  productName: string // Per compatibilità gestionale
   price: number
   quantity: number
+  total: number // Per compatibilità gestionale
   image: string
 }
 
@@ -76,19 +78,30 @@ export interface ShippingAddress {
   phone?: string
 }
 
+// Address type compatible with gestionale
+export interface Address {
+  street: string
+  city: string
+  state: string
+  postalCode: string
+  country: string
+}
+
 export interface Order {
   id: string
   customerId: string
   customerEmail: string
   items: OrderItem[]
   shipping: ShippingAddress
+  shippingAddress: Address // Per compatibilità gestionale
+  billingAddress: Address // Per compatibilità gestionale
   billing?: ShippingAddress
   subtotal: number
   shipping_cost: number
   total: number
   status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
   paymentMethod: 'manual' | 'stripe' // Per ora solo manual
-  paymentStatus: 'pending' | 'paid' | 'failed'
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded'
   notes?: string
   createdAt: Date
   updatedAt: Date

@@ -6,12 +6,15 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Product } from '@/lib/types'
 
 interface ProductShowcaseProps {
+  product: Product
   onAddToCart?: () => void
+  isAvailable?: boolean
 }
 
-export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
+export function ProductShowcase({ product, onAddToCart, isAvailable = true }: ProductShowcaseProps) {
   const fadeInUp = {
     initial: { opacity: 0, y: 40 },
     animate: { opacity: 1, y: 0 },
@@ -33,13 +36,15 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
 
   const starPositions = generateStarPositions(30)
 
-  const botanicals = [
+  // Use botanicals from product or fallback to default
+  const botanicals = product.botanicals || [
     'Ginepro Toscano', 'Coriandolo', 'Angelica', 'Iris',
     'Cardamomo', 'Cannella', 'Scorza di Limone', 'Lavanda',
     'Rosmarino', 'Timo', 'Bacche di Rosa', 'Stelle Alpine'
   ]
 
-  const tastingNotes = [
+  // Use tasting notes from product or fallback to default
+  const tastingNotes = product.tastingNotes || [
     { phase: 'Luna Nuova', note: 'Note fresche di ginepro e agrumi' },
     { phase: 'Primo Quarto', note: 'Spezie delicate, coriandolo e cardamomo' },
     { phase: 'Luna Piena', note: 'Complessità erbacea, lavanda e rosmarino' },
@@ -82,13 +87,23 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
             transition={{ duration: 0.8 }}
           >
             <div className="relative">
-              {/* Main Product Image Placeholder */}
-              <div className="aspect-[3/4] bg-gradient-to-b from-secondary/20 to-secondary/40 rounded-2xl flex items-center justify-center border border-secondary/30 backdrop-blur-sm">
-                <div className="text-center text-secondary">
-                  <div className="text-8xl mb-4">🍶</div>
-                  <div className="text-lg">BibiGin - Bottiglia Premium</div>
-                  <div className="text-sm opacity-70">Gin delle Fasi Lunari</div>
-                </div>
+              {/* Main Product Image */}
+              <div className="aspect-[3/4] rounded-2xl overflow-hidden border border-secondary/30 backdrop-blur-sm">
+                {product.imageUrl || (product.images && product.images.length > 0) ? (
+                  <img 
+                    src={product.imageUrl || product.images[0]} 
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-secondary/40 flex items-center justify-center">
+                    <div className="text-center text-secondary">
+                      <div className="text-8xl mb-4">🍶</div>
+                      <div className="text-lg">BibiGin - Bottiglia Premium</div>
+                      <div className="text-sm opacity-70">Gin delle Fasi Lunari</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Floating Badge */}
@@ -112,7 +127,7 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
             {/* Header */}
             <div className="space-y-4">
               <h2 className="text-4xl md:text-5xl font-playfair font-bold text-secondary">
-                BibiGin
+                {product.name}
                 <span className="block text-2xl text-gold font-medium mt-2">
                   Gin delle Fasi Lunari
                 </span>
@@ -129,28 +144,23 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
               </div>
 
               <p className="text-lg text-secondary leading-relaxed">
-                Un gin artigianale premium che cattura l&apos;essenza delle fasi lunari attraverso 
-                una selezione di 12 botanici pregiati, distillati con metodi tradizionali 
-                sotto il cielo stellato toscano.
+                {product.description || "Un gin artigianale premium che cattura l'essenza delle fasi lunari attraverso una selezione di 12 botanici pregiati, distillati con metodi tradizionali sotto il cielo stellato toscano."}
               </p>
             </div>
 
             {/* Price */}
             <div className="space-y-4">
               <div className="flex items-baseline space-x-4">
-                <span className="text-4xl font-bold text-secondary">€89</span>
-                <span className="text-lg text-secondary/70 line-through">€120</span>
-                <Badge className="bg-emerald-100 text-emerald-700 border-0">
-                  -26% Lancio
-                </Badge>
+                <span className="text-4xl font-bold text-secondary">€{product.price}</span>
               </div>
               
               <Button 
                 size="lg" 
                 onClick={onAddToCart}
-                className="w-full bg-gold hover:bg-gold/90 text-navy font-semibold text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/20"
+                disabled={!isAvailable}
+                className="w-full bg-gold hover:bg-gold/90 text-navy font-semibold text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/20 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Aggiungi al Carrello
+                {isAvailable ? 'Aggiungi al Carrello' : 'Non Disponibile'}
               </Button>
             </div>
 
@@ -159,10 +169,10 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
             {/* Product Features */}
             <div className="grid grid-cols-2 gap-6">
               {[
-                { icon: Shield, label: 'Garanzia Qualità', value: '100%' },
-                { icon: Leaf, label: 'Biologico', value: 'Certificato' },
-                { icon: Award, label: 'Distillazione', value: 'Artigianale' },
-                { icon: Star, label: 'Gradazione', value: '43° Vol.' }
+                { icon: Shield, label: 'Stock', value: `${product.stock} disponibili` },
+                { icon: Leaf, label: 'Volume', value: `${product.bottleSize}L` },
+                { icon: Award, label: 'Peso', value: `${product.weight}kg` },
+                { icon: Star, label: 'Gradazione', value: `${product.alcoholContent}° Vol.` }
               ].map((feature, idx) => (
                 <motion.div
                   key={feature.label}
@@ -189,7 +199,7 @@ export function ProductShowcase({ onAddToCart }: ProductShowcaseProps) {
             {/* Botanicals */}
             <div>
               <h3 className="text-xl font-playfair font-semibold text-secondary mb-4">
-                12 Botanici Selezionati
+                {botanicals.length} Botanici Selezionati
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {botanicals.map((botanical, idx) => (

@@ -164,25 +164,23 @@ export function CartDrawer({
                 </div>
                 <div className="flex items-center justify-between text-secondary/70">
                   <span>Spedizione</span>
-                  <span>{totalPrice >= 50 ? 'Gratuita' : '€5.00'}</span>
+                  <span>€12.00</span>
                 </div>
                 <Separator className="bg-secondary/20" />
                 <div className="flex items-center justify-between text-lg font-bold text-secondary">
                   <span>Totale</span>
                   <span className="text-gold">
-                    €{(totalPrice + (totalPrice >= 50 ? 0 : 5)).toFixed(2)}
+                    €{(totalPrice + 12).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               {/* Shipping Info */}
-              {totalPrice < 50 && (
-                <div className="bg-gold/10 border border-gold/30 rounded-lg p-3">
-                  <p className="text-sm text-gold">
-                    💡 Spendi altri €{(50 - totalPrice).toFixed(2)} per la spedizione gratuita!
-                  </p>
-                </div>
-              )}
+              <div className="bg-navy/10 border border-navy/30 rounded-lg p-3">
+                <p className="text-sm text-secondary/80">
+                  🚚 Spedizione in tutta Italia - Consegna in 5-7 giorni lavorativi
+                </p>
+              </div>
 
               {/* Checkout Button */}
               <Button 

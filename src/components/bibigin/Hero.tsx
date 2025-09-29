@@ -1,15 +1,17 @@
 'use client'
 
 import { motion } from 'framer-motion'
-// ArrowDown removed as it's not used
 import { Button } from '@/components/ui/button'
+import { Product } from '@/lib/types'
 
 interface HeroProps {
+  product: Product
   onAddToCart?: () => void
   onScrollToProduct?: () => void
+  isAvailable?: boolean
 }
 
-export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
+export function Hero({ product, onAddToCart, onScrollToProduct, isAvailable = true }: HeroProps) {
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
     animate: { opacity: 1, y: 0 },
@@ -81,7 +83,7 @@ export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
               variants={fadeInUp}
               className="text-5xl md:text-7xl font-playfair font-bold text-secondary leading-tight"
             >
-              BibiGin
+              {product.name}
               <br />
               <span className="text-gold text-3xl md:text-5xl block mt-2">
                 Gin delle Fasi Lunari
@@ -92,8 +94,7 @@ export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
               variants={fadeInUp}
               className="text-xl text-secondary max-w-lg mx-auto lg:mx-0 leading-relaxed"
             >
-              Un gin artigianale premium che cattura l&apos;essenza delle fasi lunari. 
-              Distillato con botanici selezionati sotto il cielo stellato per un sapore celestiale unico.
+              {product.description || 'Un gin artigianale premium che cattura l\'essenza delle fasi lunari. Distillato con botanici selezionati sotto il cielo stellato per un sapore celestiale unico.'}
             </motion.p>
 
             <motion.div 
@@ -103,9 +104,10 @@ export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
               <Button
                 size="lg"
                 onClick={onAddToCart}
-                className="bg-gold hover:bg-gold/90 text-navy font-semibold px-8 py-4 text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30"
+                disabled={!isAvailable}
+                className="bg-gold hover:bg-gold/90 text-navy font-semibold px-8 py-4 text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Acquista Ora - €89
+                {isAvailable ? `Acquista Ora - €${product.price}` : 'Non Disponibile'}
               </Button>
               <Button
                 variant="outline"
@@ -123,16 +125,16 @@ export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
               className="grid grid-cols-3 gap-6 pt-8 max-w-md mx-auto lg:mx-0"
             >
               <div className="text-center">
-                <div className="text-gold text-2xl font-bold">43°</div>
+                <div className="text-gold text-2xl font-bold">{product.alcoholContent}°</div>
                 <div className="text-secondary/60 text-sm">Vol. Alcolico</div>
               </div>
               <div className="text-center">
-                <div className="text-gold text-2xl font-bold">750ml</div>
-                <div className="text-secondary/60 text-sm">Bottiglia</div>
+                <div className="text-gold text-2xl font-bold">{product.bottleSize}L</div>
+                <div className="text-secondary/60 text-sm">Volume</div>
               </div>
               <div className="text-center">
-                <div className="text-gold text-2xl font-bold">12</div>
-                <div className="text-secondary/60 text-sm">Botanici</div>
+                <div className="text-gold text-2xl font-bold">{product.stock}</div>
+                <div className="text-secondary/60 text-sm">Disponibili</div>
               </div>
             </motion.div>
           </motion.div>
@@ -158,12 +160,22 @@ export function Hero({ onAddToCart, onScrollToProduct }: HeroProps) {
               }}
             />
             
-            {/* Placeholder for Bottle Image - Replace with actual bottle image */}
-            <div className="relative w-64 h-96 bg-gradient-to-b from-secondary/20 to-secondary/40 rounded-lg flex items-center justify-center backdrop-blur-sm border border-secondary/30">
-              <div className="text-center text-secondary">
-                <div className="text-6xl mb-4">🍶</div>
-                <div className="text-sm opacity-80">Immagine Bottiglia BibiGin</div>
-              </div>
+            {/* Product Bottle Image */}
+            <div className="relative w-64 h-96 rounded-lg overflow-hidden backdrop-blur-sm border border-secondary/30">
+              {product.imageUrl || (product.images && product.images.length > 0) ? (
+                <img 
+                  src={product.imageUrl || product.images[0]} 
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-secondary/40 flex items-center justify-center">
+                  <div className="text-center text-secondary">
+                    <div className="text-6xl mb-4">🍶</div>
+                    <div className="text-sm opacity-80">Immagine Bottiglia BibiGin</div>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>

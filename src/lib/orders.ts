@@ -4,15 +4,18 @@ import {
   addDoc, 
   getDoc,
   setDoc,
+  updateDoc,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  runTransaction
 } from 'firebase/firestore'
 import { db } from './firebase'
-import { Order, CartItem, ShippingAddress, Customer, Address } from './types'
+import { Order, CartItem, ShippingAddress, User, Address } from './types'
 
 // Constants
 const ORDERS_COLLECTION = 'orders'
-const CUSTOMERS_COLLECTION = 'customers'
+const USERS_COLLECTION = 'users'
+const PRODUCTS_COLLECTION = 'products'
 const SHIPPING_COST = 12 // Fixed shipping cost in euros
 
 /**
@@ -31,44 +34,63 @@ export function calculateOrderTotals(items: CartItem[]) {
 }
 
 /**
- * Create or update customer record
+ * Update user order history
  */
-async function createOrUpdateCustomer(
-  email: string, 
-  shippingAddress: ShippingAddress
-): Promise<string> {
+async function updateUserOrderHistory(
+  userId: string,
+  orderId: string,
+  orderTotal: number
+): Promise<void> {
   try {
-    // Use email as document ID for easy lookup
-    const customerDocId = email.replace(/[.#$[\]]/g, '_') // Firebase-safe ID
-    const customerRef = doc(db, CUSTOMERS_COLLECTION, customerDocId)
+    const userRef = doc(db, USERS_COLLECTION, userId)
+    const userSnap = await getDoc(userRef)
     
-    // Check if customer exists
-    const customerSnap = await getDoc(customerRef)
-    
-    const customerData: Omit<Customer, 'id'> = {
-      email,
-      firstName: shippingAddress.firstName,
-      lastName: shippingAddress.lastName,
-      phone: shippingAddress.phone,
-      defaultAddress: {
-        street: shippingAddress.street,
-        city: shippingAddress.city,
-        postalCode: shippingAddress.postalCode,
-        country: shippingAddress.country,
-        isDefault: true
-      },
-      orders: customerSnap.exists() ? customerSnap.data().orders || [] : [],
-      createdAt: customerSnap.exists() ? customerSnap.data().createdAt : serverTimestamp(),
-      updatedAt: serverTimestamp()
+    if (userSnap.exists()) {
+      const userData = userSnap.data()
+      const currentOrders = userData.orders || []
+      const currentTotalSpent = userData.totalSpent || 0
+      
+      await updateDoc(userRef, {
+        orders: [...currentOrders, orderId],
+        totalSpent: currentTotalSpent + orderTotal,
+        updatedAt: serverTimestamp()
+      })
     }
-    
-    // Create or update customer
-    await setDoc(customerRef, customerData, { merge: true })
-    
-    return customerDocId
   } catch (error) {
-    console.error('Error creating/updating customer:', error)
-    throw new Error('Errore nella creazione del profilo cliente')
+    console.error('Error updating user order history:', error)
+    throw new Error('Errore nell\'aggiornamento dello storico ordini')
+  }
+}
+
+/**
+ * Update product stock
+ */
+async function updateProductStock(
+  productId: string,
+  quantityToReduce: number
+): Promise<void> {
+  try {
+    const productRef = doc(db, PRODUCTS_COLLECTION, productId)
+    const productSnap = await getDoc(productRef)
+    
+    if (productSnap.exists()) {
+      const productData = productSnap.data()
+      const currentStock = productData.stock || 0
+      
+      if (currentStock < quantityToReduce) {
+        throw new Error(`Stock insufficiente. Disponibili: ${currentStock}`)
+      }
+      
+      await updateDoc(productRef, {
+        stock: currentStock - quantityToReduce,
+        updatedAt: serverTimestamp()
+      })
+    } else {
+      throw new Error('Prodotto non trovato')
+    }
+  } catch (error) {
+    console.error('Error updating product stock:', error)
+    throw error
   }
 }
 
@@ -79,6 +101,7 @@ export async function createOrder(
   items: CartItem[],
   shipping: ShippingAddress,
   customerEmail: string,
+  userId: string,
   notes?: string
 ): Promise<string> {
   try {
@@ -86,11 +109,15 @@ export async function createOrder(
       throw new Error('Il carrello è vuoto')
     }
     
+    // Verify user exists
+    const userRef = doc(db, USERS_COLLECTION, userId)
+    const userSnap = await getDoc(userRef)
+    if (!userSnap.exists()) {
+      throw new Error('Utente non trovato')
+    }
+    
     // Calculate totals
     const { subtotal, shipping_cost, total } = calculateOrderTotals(items)
-    
-    // Create or update customer
-    const customerId = await createOrUpdateCustomer(customerEmail, shipping)
     
     // Convert ShippingAddress to Address format for gestionale compatibility
     const addressData: Address = {
@@ -101,48 +128,90 @@ export async function createOrder(
       country: shipping.country
     }
     
-    // Prepare order data
-    const orderData: Omit<Order, 'id'> = {
-      customerId,
-      customerEmail,
-      items: items.map(item => ({
-        productId: item.productId,
-        name: item.name,
-        productName: item.name, // For gestionale compatibility
-        price: item.price,
-        quantity: item.quantity,
-        total: item.price * item.quantity, // For gestionale compatibility
-        image: item.image
-      })),
-      shipping,
-      shippingAddress: addressData, // For gestionale compatibility
-      billingAddress: addressData, // Same as shipping for now
-      subtotal,
-      shipping_cost,
-      total,
-      status: 'pending',
-      paymentMethod: 'manual',
-      paymentStatus: 'pending',
-      notes,
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp
-    }
-    
-    // Create order in Firestore
-    const orderRef = await addDoc(collection(db, ORDERS_COLLECTION), orderData)
-    
-    // Update customer's orders list
-    const customerRef = doc(db, CUSTOMERS_COLLECTION, customerId)
-    const customerSnap = await getDoc(customerRef)
-    if (customerSnap.exists()) {
-      const existingOrders = customerSnap.data().orders || []
-      await setDoc(customerRef, {
-        orders: [...existingOrders, orderRef.id],
+    // Use transaction to ensure atomicity
+    const orderId = await runTransaction(db, async (transaction) => {
+      // FIRST: Do all reads
+      const productSnaps = new Map()
+      
+      // Read all products
+      for (const item of items) {
+        const productRef = doc(db, PRODUCTS_COLLECTION, item.productId)
+        const productSnap = await transaction.get(productRef)
+        productSnaps.set(item.productId, productSnap)
+        
+        if (!productSnap.exists()) {
+          throw new Error(`Prodotto non trovato: ${item.name}`)
+        }
+        
+        const productData = productSnap.data()
+        const currentStock = productData.stock || 0
+        
+        if (currentStock < item.quantity) {
+          throw new Error(`Stock insufficiente per ${item.name}. Disponibili: ${currentStock}`)
+        }
+      }
+      
+      // Read user data
+      const userData = userSnap.data()
+      const currentOrders = userData.orders || []
+      const currentTotalSpent = userData.totalSpent || 0
+      
+      // SECOND: Do all writes
+      // Prepare order data
+      const orderData: Omit<Order, 'id'> = {
+        customerId: userId, // Use Firebase UID
+        customerEmail,
+        items: items.map(item => ({
+          productId: item.productId,
+          name: item.name,
+          productName: item.name, // For gestionale compatibility
+          price: item.price,
+          quantity: item.quantity,
+          total: item.price * item.quantity, // For gestionale compatibility
+          image: item.image
+        })),
+        shipping,
+        shippingAddress: addressData, // For gestionale compatibility
+        billingAddress: addressData, // Same as shipping for now
+        subtotal,
+        shipping_cost,
+        total,
+        status: 'pending',
+        paymentMethod: 'manual',
+        paymentStatus: 'pending',
+        notes,
+        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
-      }, { merge: true })
-    }
+      }
+      
+      // Create order
+      const orderRef = doc(collection(db, ORDERS_COLLECTION))
+      transaction.set(orderRef, orderData)
+      
+      // Update stock for each product
+      for (const item of items) {
+        const productRef = doc(db, PRODUCTS_COLLECTION, item.productId)
+        const productSnap = productSnaps.get(item.productId)
+        const productData = productSnap.data()
+        const newStock = (productData?.stock || 0) - item.quantity
+        
+        transaction.update(productRef, {
+          stock: newStock,
+          updatedAt: serverTimestamp()
+        })
+      }
+      
+      // Update user order history
+      transaction.update(userRef, {
+        orders: [...currentOrders, orderRef.id],
+        totalSpent: currentTotalSpent + total,
+        updatedAt: serverTimestamp()
+      })
+      
+      return orderRef.id
+    })
     
-    return orderRef.id
+    return orderId
   } catch (error) {
     console.error('Error creating order:', error)
     if (error instanceof Error) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { 
+import {
   User as FirebaseUser,
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -9,14 +9,23 @@ import {
   signOut as firebaseSignOut,
   updateProfile
 } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { doc, setDoc } from 'firebase/firestore'
+import { auth, db } from '@/lib/firebase'
 import { User } from '@/lib/types'
 
 interface AuthContextType {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
+  signUp: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    acceptedTerms: boolean,
+    acceptedPrivacy: boolean,
+    acceptedAge: boolean
+  ) => Promise<void>
   signOut: () => Promise<void>
   isAuthenticated: boolean
 }
@@ -66,20 +75,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Sign up with email and password
-  const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    acceptedTerms: boolean,
+    acceptedPrivacy: boolean,
+    acceptedAge: boolean
+  ) => {
     try {
       const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password)
-      
+
       // Update profile with display name
       await updateProfile(firebaseUser, {
         displayName: `${firstName} ${lastName}`
       })
-      
+
+      // Create customer document in Firestore with legal acceptance
+      const now = new Date()
+      await setDoc(doc(db, 'customers', firebaseUser.uid), {
+        id: firebaseUser.uid,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        orders: [],
+        // Legal acceptance flags
+        acceptedTerms: acceptedTerms,
+        acceptedPrivacy: acceptedPrivacy,
+        acceptedAge: acceptedAge,
+        termsAcceptedAt: now,
+        privacyAcceptedAt: now,
+        createdAt: now,
+        updatedAt: now
+      })
+
       // Reload user to get updated profile
       await firebaseUser.reload()
     } catch (error: any) {
       console.error('Sign up error:', error)
-      
+
       // Handle specific Firebase errors
       if (error.code === 'auth/email-already-in-use') {
         throw new Error('Questo indirizzo email è già registrato')

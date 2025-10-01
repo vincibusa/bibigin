@@ -36,25 +36,13 @@ export interface CartItem {
   image: string
 }
 
-// Customer Types
+// Address Types
 export interface Address {
   street: string
   city: string
   postalCode: string
   country: string
   isDefault?: boolean
-}
-
-export interface Customer {
-  id: string // Firebase UID
-  email: string
-  firstName: string
-  lastName: string
-  phone?: string
-  defaultAddress?: Address
-  orders: string[]
-  createdAt: Date
-  updatedAt: Date
 }
 
 // Order Types
@@ -107,15 +95,31 @@ export interface Order {
   updatedAt: Date
 }
 
-// Auth Types
+// User Types (unified User/Customer)
 export interface User {
-  id: string
+  id: string // Firebase UID
   email: string
-  firstName?: string
-  lastName?: string
+  firstName: string
+  lastName: string
+  phone: string
+  address: string
+  city: string
+  province: string
+  postalCode: string
+  country: string
+  dateOfBirth: Date
+  role: 1 | 2 // 1 = admin, 2 = normal user
+  isActive: boolean
+  acceptedTerms: boolean
+  authProvider: 'email' | 'google'
   photoURL?: string
-  emailVerified: boolean
+  emailVerified?: boolean
+  // E-commerce fields
+  orders: string[] // Order IDs
+  totalSpent: number
   createdAt: Date
+  updatedAt: Date
+  lastLoginAt?: Date
 }
 
 // Cart State

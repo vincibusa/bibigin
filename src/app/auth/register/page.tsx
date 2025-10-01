@@ -28,7 +28,19 @@ const registerSchema = z.object({
   password: z.string()
     .min(6, 'La password deve essere di almeno 6 caratteri')
     .regex(/(?=.*[0-9])/, 'La password deve contenere almeno un numero'),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
+  acceptTerms: z.boolean()
+    .refine((val) => val === true, {
+      message: 'Devi accettare i Termini e Condizioni'
+    }),
+  acceptPrivacy: z.boolean()
+    .refine((val) => val === true, {
+      message: 'Devi accettare la Privacy Policy'
+    }),
+  acceptAge: z.boolean()
+    .refine((val) => val === true, {
+      message: 'Devi confermare di avere almeno 18 anni'
+    })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Le password non coincidono",
   path: ["confirmPassword"]
@@ -67,9 +79,17 @@ export default function RegisterPage() {
     try {
       setIsLoading(true)
       setError(null)
-      
-      await signUp(data.email, data.password, data.firstName, data.lastName)
-      
+
+      await signUp(
+        data.email,
+        data.password,
+        data.firstName,
+        data.lastName,
+        data.acceptTerms,
+        data.acceptPrivacy,
+        data.acceptAge
+      )
+
       // Redirect will be handled by useEffect
     } catch (err: any) {
       setError(err.message || 'Errore durante la registrazione')
@@ -244,6 +264,82 @@ export default function RegisterPage() {
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
                 )}
+              </div>
+
+              {/* Legal Checkboxes */}
+              <div className="space-y-4 pt-2 border-t border-secondary/20">
+                {/* Age Confirmation */}
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="acceptAge"
+                    className="mt-1 h-4 w-4 text-gold focus:ring-gold border-secondary/30 rounded"
+                    {...register('acceptAge')}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="acceptAge" className="text-sm text-secondary cursor-pointer font-semibold">
+                      🔞 Dichiaro di avere almeno 18 anni *
+                    </Label>
+                    <p className="text-xs text-secondary/60 mt-1">
+                      La vendita di bevande alcoliche è vietata ai minori
+                    </p>
+                    {errors.acceptAge && (
+                      <p className="text-red-500 text-xs mt-1">{errors.acceptAge.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Terms and Conditions */}
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="acceptTerms"
+                    className="mt-1 h-4 w-4 text-gold focus:ring-gold border-secondary/30 rounded"
+                    {...register('acceptTerms')}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="acceptTerms" className="text-sm text-secondary cursor-pointer">
+                      Accetto i{' '}
+                      <a
+                        href="/legal/terms"
+                        target="_blank"
+                        className="text-gold hover:underline font-semibold"
+                      >
+                        Termini e Condizioni
+                      </a>{' '}
+                      *
+                    </Label>
+                    {errors.acceptTerms && (
+                      <p className="text-red-500 text-xs mt-1">{errors.acceptTerms.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Privacy Policy */}
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="acceptPrivacy"
+                    className="mt-1 h-4 w-4 text-gold focus:ring-gold border-secondary/30 rounded"
+                    {...register('acceptPrivacy')}
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="acceptPrivacy" className="text-sm text-secondary cursor-pointer">
+                      Accetto la{' '}
+                      <a
+                        href="/legal/privacy"
+                        target="_blank"
+                        className="text-gold hover:underline font-semibold"
+                      >
+                        Privacy Policy
+                      </a>{' '}
+                      e autorizzo il trattamento dei miei dati personali *
+                    </Label>
+                    {errors.acceptPrivacy && (
+                      <p className="text-red-500 text-xs mt-1">{errors.acceptPrivacy.message}</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Error Message */}

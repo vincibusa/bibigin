@@ -36,9 +36,14 @@ export function Footer() {
   const quickLinks = [
     { name: 'Il Gin', href: '#product' },
     { name: 'La Storia', href: '#story' },
-    { name: 'Recensioni', href: '#reviews' },
-    { name: 'Privacy Policy', href: '#' },
-    { name: 'Termini di Servizio', href: '#' }
+    { name: 'Recensioni', href: '#reviews' }
+  ]
+
+  const legalLinks = [
+    { name: 'Privacy Policy', href: '/legal/privacy' },
+    { name: 'Termini e Condizioni', href: '/legal/terms' },
+    { name: 'Cookie Policy', href: '/legal/cookies' },
+    { name: 'Info Vendita Alcol', href: '/legal/alcohol' }
   ]
 
   return (
@@ -69,12 +74,11 @@ export function Footer() {
       <div className="container relative z-10 mx-auto px-4 py-16">
         <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-12 mb-12">
           {/* Brand Section */}
-          <motion.div 
+          <motion.div
             variants={fadeInUp}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
-            className="lg:col-span-2"
           >
             <div className="flex items-center space-x-3 mb-6">
               <Image
@@ -88,10 +92,10 @@ export function Footer() {
                 BibiGin
               </span>
             </div>
-            
+
             <p className="text-secondary/80 leading-relaxed mb-6 max-w-md">
-              Gin delle Fasi Lunari - Un distillato artigianale premium che cattura 
-              l&apos;essenza dell&apos;astronomia in ogni sorso. Prodotto con passione sotto 
+              Gin delle Fasi Lunari - Un distillato artigianale premium che cattura
+              l&apos;essenza dell&apos;astronomia in ogni sorso. Prodotto con passione sotto
               il cielo stellato toscano.
             </p>
 
@@ -141,6 +145,31 @@ export function Footer() {
             </ul>
           </motion.div>
 
+          {/* Legal Links */}
+          <motion.div
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            transition={{ delay: 0.15 }}
+          >
+            <h3 className="font-playfair text-xl font-bold text-secondary mb-6">
+              Informazioni Legali
+            </h3>
+            <ul className="space-y-3">
+              {legalLinks.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
+                    className="text-secondary/70 hover:text-gold transition-colors duration-300"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
           {/* Newsletter & Social */}
           <motion.div
             variants={fadeInUp}
@@ -152,7 +181,7 @@ export function Footer() {
             <h3 className="font-playfair text-xl font-bold text-secondary mb-6">
               Seguici
             </h3>
-            
+
             <p className="text-secondary/70 mb-6">
               Resta aggiornato sulle novità celestiali di BibiGin
             </p>
@@ -192,14 +221,32 @@ export function Footer() {
           whileInView="animate"
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+          className="flex flex-col items-center space-y-4"
         >
-          <div className="text-secondary/60 text-sm">
+          <div className="flex flex-wrap justify-center gap-4 text-xs text-secondary/60">
+            <a href="/legal/privacy" className="hover:text-gold transition-colors">
+              Privacy
+            </a>
+            <span>•</span>
+            <a href="/legal/terms" className="hover:text-gold transition-colors">
+              Termini
+            </a>
+            <span>•</span>
+            <a href="/legal/cookies" className="hover:text-gold transition-colors">
+              Cookie
+            </a>
+            <span>•</span>
+            <a href="/legal/alcohol" className="hover:text-gold transition-colors">
+              🔞 Info Alcol
+            </a>
+          </div>
+
+          <div className="text-secondary/60 text-sm text-center">
             © 2024 BibiGin. Tutti i diritti riservati. | P.IVA: IT12345678901
           </div>
-          
-          <div className="text-secondary/60 text-sm">
-            Bevi responsabilmente | Prodotto contenente alcol
+
+          <div className="text-secondary/60 text-sm text-center font-semibold">
+            🔞 Bevi responsabilmente | Vietato ai minori di 18 anni
           </div>
         </motion.div>
 

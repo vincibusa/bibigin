@@ -19,6 +19,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { useCreateOrder, useOrderCalculations } from '@/hooks/use-orders'
 import { CartItem } from '@/lib/types'
 import { checkoutFormSchema, CheckoutFormData, defaultCheckoutForm } from '@/lib/validation-checkout'
+import { sendOrderEmails } from '@/lib/email-api'
 
 function CheckoutContent() {
   const router = useRouter()
@@ -74,12 +75,34 @@ function CheckoutContent() {
     try {
       clearError()
       
+      if (!user?.id) {
+        throw new Error('Utente non autenticato')
+      }
+      
       const orderId = await createNewOrder(
         cartItems,
         data.shipping,
         data.email,
+        user.id,
         data.notes
       )
+
+      // Send order confirmation and admin notification emails
+      try {
+        await sendOrderEmails({
+          orderId,
+          customer: {
+            firstName: data.shipping.firstName,
+            lastName: data.shipping.lastName,
+            email: data.email,
+            phone: data.shipping.phone
+          }
+        })
+        console.log('Order emails sent successfully')
+      } catch (emailError) {
+        // Don't fail the whole checkout if emails fail
+        console.error('Failed to send order emails:', emailError)
+      }
 
       // Clear cart from localStorage
       localStorage.removeItem('bibigin-cart')

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
+import { calculateShippingCost } from '@/lib/shipping'
 
 interface CartItem {
   id: string
@@ -24,16 +25,18 @@ interface CartDrawerProps {
   onCheckout: () => void
 }
 
-export function CartDrawer({ 
-  isOpen, 
-  onClose, 
-  items, 
-  onUpdateQuantity, 
-  onRemoveItem, 
-  onCheckout 
+export function CartDrawer({
+  isOpen,
+  onClose,
+  items,
+  onUpdateQuantity,
+  onRemoveItem,
+  onCheckout
 }: CartDrawerProps) {
-  const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
+  const shippingCost = calculateShippingCost(totalItems)
+  const totalPrice = subtotal + shippingCost
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -160,17 +163,17 @@ export function CartDrawer({
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-secondary">
                   <span>Subtotale</span>
-                  <span>€{totalPrice.toFixed(2)}</span>
+                  <span>€{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between text-secondary/70">
-                  <span>Spedizione</span>
-                  <span>€12.00</span>
+                  <span>Spedizione ({totalItems} {totalItems === 1 ? 'bottiglia' : 'bottiglie'})</span>
+                  <span>€{shippingCost.toFixed(2)}</span>
                 </div>
                 <Separator className="bg-secondary/20" />
                 <div className="flex items-center justify-between text-lg font-bold text-secondary">
                   <span>Totale</span>
                   <span className="text-gold">
-                    €{(totalPrice + 12).toFixed(2)}
+                    €{totalPrice.toFixed(2)}
                   </span>
                 </div>
               </div>

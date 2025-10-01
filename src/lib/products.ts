@@ -1,45 +1,18 @@
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  query, 
-  where, 
-  orderBy,
-  onSnapshot,
-  Unsubscribe
-} from 'firebase/firestore'
-import { db } from './firebase'
 import { Product } from './types'
-
-// Constants
-const PRODUCTS_COLLECTION = 'products'
+import { getActiveProducts as apiGetActiveProducts, getProductById as apiGetProductById } from './api-client'
 
 /**
- * Get all active products from Firestore
+ * Get all active products from API
  */
 export async function getActiveProducts(): Promise<Product[]> {
   try {
-    const q = query(
-      collection(db, PRODUCTS_COLLECTION),
-      where('status', '==', 'active'),
-      orderBy('createdAt', 'desc')
-    )
-    
-    const snapshot = await getDocs(q)
-    const products: Product[] = []
-    
-    snapshot.forEach((doc) => {
-      const data = doc.data()
-      products.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date()
-      } as Product)
-    })
-    
-    return products
+    const products = await apiGetActiveProducts()
+    // Convert date strings back to Date objects
+    return products.map(p => ({
+      ...p,
+      createdAt: new Date(p.createdAt),
+      updatedAt: new Date(p.updatedAt)
+    })) as Product[]
   } catch (error) {
     console.error('Error fetching active products:', error)
     throw new Error('Errore nel caricamento dei prodotti')
@@ -47,24 +20,19 @@ export async function getActiveProducts(): Promise<Product[]> {
 }
 
 /**
- * Get a single product by ID
+ * Get a single product by ID from API
  */
 export async function getProductById(productId: string): Promise<Product | null> {
   try {
-    const docRef = doc(db, PRODUCTS_COLLECTION, productId)
-    const docSnap = await getDoc(docRef)
-    
-    if (docSnap.exists()) {
-      const data = docSnap.data()
-      return {
-        id: docSnap.id,
-        ...data,
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date()
-      } as Product
-    }
-    
-    return null
+    const product = await apiGetProductById(productId)
+    if (!product) return null
+
+    // Convert date strings back to Date objects
+    return {
+      ...product,
+      createdAt: new Date(product.createdAt),
+      updatedAt: new Date(product.updatedAt)
+    } as Product
   } catch (error) {
     console.error('Error fetching product:', error)
     throw new Error('Errore nel caricamento del prodotto')
@@ -86,46 +54,36 @@ export async function getMainProduct(): Promise<Product | null> {
 
 /**
  * Subscribe to real-time updates for active products
+ * Note: Polling-based implementation (API doesn't support real-time subscriptions)
  */
 export function subscribeToActiveProducts(
   callback: (products: Product[]) => void
-): Unsubscribe {
-  const q = query(
-    collection(db, PRODUCTS_COLLECTION),
-    where('status', '==', 'active'),
-    orderBy('createdAt', 'desc')
-  )
-  
-  return onSnapshot(
-    q,
-    (snapshot) => {
-      const products: Product[] = []
-      
-      snapshot.forEach((doc) => {
-        const data = doc.data()
-        products.push({
-          id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date()
-        } as Product)
-      })
-      
-      callback(products)
-    },
-    (error) => {
+): () => void {
+  // Initial fetch
+  getActiveProducts().then(callback).catch(error => {
+    console.error('Error in products subscription:', error)
+    callback([])
+  })
+
+  // Poll every 30 seconds for updates
+  const intervalId = setInterval(() => {
+    getActiveProducts().then(callback).catch(error => {
       console.error('Error in products subscription:', error)
       callback([])
-    }
-  )
+    })
+  }, 30000)
+
+  // Return unsubscribe function
+  return () => clearInterval(intervalId)
 }
 
 /**
  * Subscribe to real-time updates for the main product
+ * Note: Polling-based implementation
  */
 export function subscribeToMainProduct(
   callback: (product: Product | null) => void
-): Unsubscribe {
+): () => void {
   return subscribeToActiveProducts((products) => {
     callback(products.length > 0 ? products[0] : null)
   })
@@ -151,3 +109,6 @@ export function getProductDisplayInfo(product: Product) {
     alcohol: `${product.alcoholContent}°`
   }
 }
+
+// Re-export from api-client for convenience
+export { isProductAvailable as isProductAvailableAPI } from './api-client'

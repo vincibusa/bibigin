@@ -202,10 +202,10 @@ function OrdersContent() {
                                 Indirizzo di spedizione:
                               </p>
                               <p className="text-secondary text-sm font-medium">
-                                {order.shipping.street}, {order.shipping.city}
+                                {(order.shipping || order.shippingAddress)?.street}, {(order.shipping || order.shippingAddress)?.city}
                               </p>
                               <p className="text-secondary text-sm">
-                                {order.shipping.postalCode}, {order.shipping.country}
+                                {(order.shipping || order.shippingAddress)?.postalCode}, {(order.shipping || order.shippingAddress)?.country}
                               </p>
                             </div>
                             <div className="text-right">

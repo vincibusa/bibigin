@@ -27,8 +27,7 @@ export const shippingAddressSchema = z.object({
     .regex(/^\d{5}$/, 'Il CAP deve contenere solo 5 cifre'),
   
   country: z.string()
-    .min(2, 'Seleziona un paese')
-    .default('Italia'),
+    .min(2, 'Seleziona un paese'),
   
   phone: z.string()
     .optional()
@@ -58,7 +57,7 @@ export const checkoutFormSchema = z.object({
     .refine(val => val === true, 'Devi accettare la privacy policy'),
   
   // Newsletter subscription (optional)
-  subscribeNewsletter: z.boolean().default(false)
+  subscribeNewsletter: z.boolean()
 })
 
 // Type definitions
@@ -72,8 +71,7 @@ export const defaultShippingAddress: ShippingAddressData = {
   street: '',
   city: '',
   postalCode: '',
-  country: 'Italia',
-  phone: ''
+  country: 'Italia'
 }
 
 export const defaultCheckoutForm: CheckoutFormData = {

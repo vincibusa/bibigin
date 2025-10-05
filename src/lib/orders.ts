@@ -1,13 +1,33 @@
+import { 
+  collection, 
+  doc, 
+  getDocs, 
+  getDoc, 
+  query, 
+  where,
+  orderBy,
+  runTransaction,
+  serverTimestamp,
+  Timestamp
+} from 'firebase/firestore'
+import { db } from './firebase'
 import { Order, CartItem, ShippingAddress } from './types'
-import {
-  createOrder as apiCreateOrder,
-  getOrderById as apiGetOrderById,
-  getUserOrders as apiGetUserOrders,
-  formatOrderNumber as apiFormatOrderNumber,
-  getEstimatedDelivery as apiGetEstimatedDelivery,
-  sendOrderEmails
-} from './api-client'
 import { calculateShippingCost } from './shipping'
+import { sendOrderEmails } from './api-client'
+
+const ORDERS_COLLECTION = 'orders'
+const PRODUCTS_COLLECTION = 'products'
+const USERS_COLLECTION = 'users'
+
+// Helper function to convert Firestore data to Order
+function convertFirestoreOrder(id: string, data: Record<string, unknown>): Order {
+  return {
+    id,
+    ...data,
+    createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
+    updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date()
+  } as Order
+}
 
 /**
  * Calculate order totals with dynamic shipping based on bottle quantity
@@ -32,7 +52,7 @@ export function calculateOrderTotals(items: CartItem[]) {
 }
 
 /**
- * Create a new order via API and send confirmation emails
+ * Create a new order with transaction
  */
 export async function createOrder(
   items: CartItem[],
@@ -46,21 +66,117 @@ export async function createOrder(
       throw new Error('Il carrello è vuoto')
     }
 
-    // Create the order
-    const orderId = await apiCreateOrder({
+    // Calculate totals
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    const totalBottles = items.reduce((sum, item) => sum + item.quantity, 0)
+    const shipping_cost = calculateShippingCost(totalBottles)
+    const total = subtotal + shipping_cost
+
+    // Prepare order data
+    const orderFormData = {
+      customerId: userId,
+      customerEmail: customerEmail,
       items: items.map(item => ({
         productId: item.productId,
+        productName: item.name,
         name: item.name,
-        price: item.price,
         quantity: item.quantity,
+        price: item.price,
+        total: item.price * item.quantity,
         image: item.image
       })),
-      shipping,
-      customerEmail,
-      userId,
-      notes
-    })
+      shippingAddress: {
+        street: shipping.street,
+        city: shipping.city,
+        state: shipping.city,
+        postalCode: shipping.postalCode,
+        country: shipping.country
+      },
+      billingAddress: {
+        street: shipping.street,
+        city: shipping.city,
+        state: shipping.city,
+        postalCode: shipping.postalCode,
+        country: shipping.country
+      },
+      subtotal,
+      shipping_cost,
+      total,
+      status: 'pending',
+      paymentMethod: 'manual',
+      paymentStatus: 'pending',
+      notes: notes
+    }
 
+    // Use transaction to ensure atomicity
+    const orderId = await runTransaction(db, async (transaction) => {
+      // FIRST: Do all reads
+      const productSnaps = new Map()
+      
+      // Read all products
+      for (const item of orderFormData.items) {
+        const productRef = doc(db, PRODUCTS_COLLECTION, item.productId)
+        const productSnap = await transaction.get(productRef)
+        productSnaps.set(item.productId, productSnap)
+        
+        if (!productSnap.exists()) {
+          throw new Error(`Prodotto non trovato: ${item.productName}`)
+        }
+        
+        const productData = productSnap.data()
+        const currentStock = productData.stock || 0
+        
+        if (currentStock < item.quantity) {
+          throw new Error(`Stock insufficiente per ${item.productName}. Disponibili: ${currentStock}`)
+        }
+      }
+      
+      // Read user data
+      const userRef = doc(db, USERS_COLLECTION, orderFormData.customerId)
+      const userSnap = await transaction.get(userRef)
+      let currentOrders: string[] = []
+      let currentTotalSpent = 0
+      
+      if (userSnap.exists()) {
+        const userData = userSnap.data()
+        currentOrders = userData.orders || []
+        currentTotalSpent = userData.totalSpent || 0
+      }
+      
+      // SECOND: Do all writes
+      // Create order
+      const orderRef = doc(collection(db, ORDERS_COLLECTION))
+      transaction.set(orderRef, {
+        ...orderFormData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      })
+      
+      // Update stock for each product
+      for (const item of orderFormData.items) {
+        const productRef = doc(db, PRODUCTS_COLLECTION, item.productId)
+        const productSnap = productSnaps.get(item.productId)
+        const productData = productSnap.data()
+        const newStock = (productData?.stock || 0) - item.quantity
+        
+        transaction.update(productRef, {
+          stock: newStock,
+          updatedAt: serverTimestamp()
+        })
+      }
+      
+      // Update user order history
+      if (userSnap.exists()) {
+        transaction.update(userRef, {
+          orders: [...currentOrders, orderRef.id],
+          totalSpent: currentTotalSpent + orderFormData.total,
+          updatedAt: serverTimestamp()
+        })
+      }
+      
+      return orderRef.id
+    })
+    
     // Send confirmation emails (customer + admin)
     // This runs in background and doesn't block order creation
     sendOrderEmails(orderId, {
@@ -72,7 +188,7 @@ export async function createOrder(
       console.error('Failed to send order emails:', error)
       // Email failure is logged but doesn't fail the order
     })
-
+    
     return orderId
   } catch (error) {
     console.error('Error creating order:', error)
@@ -84,19 +200,18 @@ export async function createOrder(
 }
 
 /**
- * Get order by ID via API
+ * Get order by ID
  */
 export async function getOrderById(orderId: string): Promise<Order | null> {
   try {
-    const order = await apiGetOrderById(orderId)
-    if (!order) return null
-
-    // Convert date strings back to Date objects
-    return {
-      ...order,
-      createdAt: new Date(order.createdAt),
-      updatedAt: new Date(order.updatedAt)
-    } as Order
+    const docRef = doc(db, ORDERS_COLLECTION, orderId)
+    const docSnap = await getDoc(docRef)
+    
+    if (docSnap.exists()) {
+      return convertFirestoreOrder(docSnap.id, docSnap.data())
+    } else {
+      return null
+    }
   } catch (error) {
     console.error('Error fetching order:', error)
     throw new Error('Errore nel caricamento dell\'ordine')
@@ -104,17 +219,24 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
 }
 
 /**
- * Get user orders via API
+ * Get user orders
  */
 export async function getUserOrders(userId: string): Promise<Order[]> {
   try {
-    const orders = await apiGetUserOrders(userId)
-    // Convert date strings back to Date objects
-    return orders.map(order => ({
-      ...order,
-      createdAt: new Date(order.createdAt),
-      updatedAt: new Date(order.updatedAt)
-    })) as Order[]
+    const q = query(
+      collection(db, ORDERS_COLLECTION), 
+      where('customerId', '==', userId),
+      orderBy('createdAt', 'desc')
+    )
+    
+    const querySnapshot = await getDocs(q)
+    const orders: Order[] = []
+    
+    querySnapshot.forEach((doc) => {
+      orders.push(convertFirestoreOrder(doc.id, doc.data()))
+    })
+    
+    return orders
   } catch (error) {
     console.error('Error fetching user orders:', error)
     return []
@@ -125,12 +247,20 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
  * Format order number for display
  */
 export function formatOrderNumber(orderId: string): string {
-  return apiFormatOrderNumber(orderId)
+  return `#${orderId.substring(0, 8).toUpperCase()}`
 }
 
 /**
  * Calculate estimated delivery date (7 business days)
  */
 export function getEstimatedDelivery(): string {
-  return apiGetEstimatedDelivery()
+  const deliveryDate = new Date()
+  deliveryDate.setDate(deliveryDate.getDate() + 7)
+
+  return deliveryDate.toLocaleDateString('it-IT', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
 }

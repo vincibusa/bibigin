@@ -91,8 +91,8 @@ export default function RegisterPage() {
       )
 
       // Redirect will be handled by useEffect
-    } catch (err: any) {
-      setError(err.message || 'Errore durante la registrazione')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Errore durante la registrazione')
     } finally {
       setIsLoading(false)
     }

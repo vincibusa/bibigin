@@ -57,8 +57,8 @@ export default function LoginPage() {
       await signIn(data.email, data.password)
       
       // Redirect will be handled by useEffect
-    } catch (err: any) {
-      setError(err.message || 'Errore durante il login')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Errore durante il login')
     } finally {
       setIsLoading(false)
     }

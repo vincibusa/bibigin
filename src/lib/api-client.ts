@@ -2,7 +2,7 @@ import { auth } from './firebase'
 import { calculateShippingCost } from './shipping'
 
 // Base URL for API requests
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+const API_BASE_URL =  'https://gestionale--bibiginlacorte.europe-west4.hosted.app'
 
 /**
  * Get Firebase ID token for authenticated requests

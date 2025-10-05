@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { User, Package, MapPin, Settings, Calendar, Mail, Phone, Shield } from 'lucide-react'
+import { User, Package, MapPin, Settings, Calendar, Mail, Shield } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -16,7 +16,7 @@ import { Header, Footer } from '@/components/bibigin'
 function AccountContent() {
   const router = useRouter()
   const { user } = useAuth()
-  const [recentOrders, setRecentOrders] = useState(0)
+  const [recentOrders] = useState(0)
 
   const getUserInitials = () => {
     if (!user) return 'U'

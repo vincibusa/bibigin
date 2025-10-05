@@ -6,12 +6,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { ArrowLeft, User, Mail, Phone, Save, Shield, Calendar, Check, AlertCircle } from 'lucide-react'
+import { ArrowLeft, User, Mail, Save, Shield, Calendar, Check, AlertCircle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { useAuth } from '@/contexts/auth-context'
@@ -84,7 +83,7 @@ function SettingsContent() {
 
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Update error:', err)
       setError('Errore durante l\'aggiornamento dei dati')
     } finally {
@@ -113,7 +112,7 @@ function SettingsContent() {
                 className="text-secondary hover:text-gold mb-4"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Torna all'Account
+                Torna all&apos;Account
               </Button>
 
               <div className="flex items-center justify-between">

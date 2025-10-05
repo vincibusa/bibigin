@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { CheckCircle, Package, CreditCard, Clock, ArrowRight, Home } from 'lucide-react'
+import { CheckCircle, Package, CreditCard, Clock, Home } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { useOrder } from '@/hooks/use-orders'
 import { formatOrderNumber, getEstimatedDelivery } from '@/lib/orders'
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const orderId = searchParams.get('order')
@@ -190,16 +190,16 @@ export default function CheckoutSuccessPage() {
                   <p className="text-secondary/70 text-sm">Indirizzo di consegna:</p>
                   <div className="text-secondary">
                     <p className="font-medium">
-                      {order.shipping.firstName} {order.shipping.lastName}
+                      {order.shipping?.firstName || 'N/A'} {order.shipping?.lastName || ''}
                     </p>
-                    <p>{order.shipping.street}</p>
+                    <p>{order.shipping?.street || order.shippingAddress?.street || 'N/A'}</p>
                     <p>
-                      {order.shipping.postalCode} {order.shipping.city}
+                      {order.shipping?.postalCode || order.shippingAddress?.postalCode || 'N/A'} {order.shipping?.city || order.shippingAddress?.city || 'N/A'}
                     </p>
-                    <p>{order.shipping.country}</p>
-                    {order.shipping.phone && (
+                    <p>{order.shipping?.country || order.shippingAddress?.country || 'N/A'}</p>
+                    {(order.shipping?.phone || order.billing?.phone) && (
                       <p className="text-secondary/70 text-sm mt-1">
-                        Tel: {order.shipping.phone}
+                        Tel: {order.shipping?.phone || order.billing?.phone}
                       </p>
                     )}
                   </div>
@@ -253,7 +253,7 @@ export default function CheckoutSuccessPage() {
                     </div>
                     <h3 className="font-semibold text-secondary mb-2">Conferma Email</h3>
                     <p className="text-sm text-secondary/70">
-                      Riceverai una email di conferma con i dettagli dell'ordine e le istruzioni per il pagamento.
+                      Riceverai una email di conferma con i dettagli dell&apos;ordine e le istruzioni per il pagamento.
                     </p>
                   </div>
 
@@ -301,5 +301,20 @@ export default function CheckoutSuccessPage() {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-cosmic-gradient flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 border-4 border-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-secondary">Caricamento...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutSuccessContent />
+    </Suspense>
   )
 }

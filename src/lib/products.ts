@@ -1,18 +1,48 @@
+import { 
+  collection, 
+  doc, 
+  getDocs, 
+  getDoc, 
+  query, 
+  where,
+  orderBy,
+  onSnapshot,
+  Timestamp
+} from 'firebase/firestore'
+import { db } from './firebase'
 import { Product } from './types'
-import { getActiveProducts as apiGetActiveProducts, getProductById as apiGetProductById } from './api-client'
+
+const PRODUCTS_COLLECTION = 'products'
+
+// Helper function to convert Firestore data to Product
+function convertFirestoreProduct(id: string, data: Record<string, unknown>): Product {
+  return {
+    id,
+    ...data,
+    createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
+    updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date()
+  } as Product
+}
 
 /**
- * Get all active products from API
+ * Get all active products from Firestore
  */
 export async function getActiveProducts(): Promise<Product[]> {
   try {
-    const products = await apiGetActiveProducts()
-    // Convert date strings back to Date objects
-    return products.map(p => ({
-      ...p,
-      createdAt: new Date(p.createdAt),
-      updatedAt: new Date(p.updatedAt)
-    })) as Product[]
+    const q = query(
+      collection(db, PRODUCTS_COLLECTION), 
+      where('status', '==', 'active'),
+      orderBy('createdAt', 'desc')
+    )
+    
+    const querySnapshot = await getDocs(q)
+    const products: Product[] = []
+    
+    querySnapshot.forEach((doc) => {
+      products.push(convertFirestoreProduct(doc.id, doc.data()))
+    })
+    
+    return products
   } catch (error) {
     console.error('Error fetching active products:', error)
     throw new Error('Errore nel caricamento dei prodotti')
@@ -20,19 +50,18 @@ export async function getActiveProducts(): Promise<Product[]> {
 }
 
 /**
- * Get a single product by ID from API
+ * Get a single product by ID from Firestore
  */
 export async function getProductById(productId: string): Promise<Product | null> {
   try {
-    const product = await apiGetProductById(productId)
-    if (!product) return null
-
-    // Convert date strings back to Date objects
-    return {
-      ...product,
-      createdAt: new Date(product.createdAt),
-      updatedAt: new Date(product.updatedAt)
-    } as Product
+    const docRef = doc(db, PRODUCTS_COLLECTION, productId)
+    const docSnap = await getDoc(docRef)
+    
+    if (docSnap.exists()) {
+      return convertFirestoreProduct(docSnap.id, docSnap.data())
+    } else {
+      return null
+    }
   } catch (error) {
     console.error('Error fetching product:', error)
     throw new Error('Errore nel caricamento del prodotto')
@@ -54,32 +83,32 @@ export async function getMainProduct(): Promise<Product | null> {
 
 /**
  * Subscribe to real-time updates for active products
- * Note: Polling-based implementation (API doesn't support real-time subscriptions)
  */
 export function subscribeToActiveProducts(
   callback: (products: Product[]) => void
 ): () => void {
-  // Initial fetch
-  getActiveProducts().then(callback).catch(error => {
+  const q = query(
+    collection(db, PRODUCTS_COLLECTION), 
+    where('status', '==', 'active'),
+    orderBy('createdAt', 'desc')
+  )
+
+  return onSnapshot(q, (querySnapshot) => {
+    const products: Product[] = []
+    
+    querySnapshot.forEach((doc) => {
+      products.push(convertFirestoreProduct(doc.id, doc.data()))
+    })
+    
+    callback(products)
+  }, (error) => {
     console.error('Error in products subscription:', error)
     callback([])
   })
-
-  // Poll every 30 seconds for updates
-  const intervalId = setInterval(() => {
-    getActiveProducts().then(callback).catch(error => {
-      console.error('Error in products subscription:', error)
-      callback([])
-    })
-  }, 30000)
-
-  // Return unsubscribe function
-  return () => clearInterval(intervalId)
 }
 
 /**
  * Subscribe to real-time updates for the main product
- * Note: Polling-based implementation
  */
 export function subscribeToMainProduct(
   callback: (product: Product | null) => void
@@ -110,5 +139,3 @@ export function getProductDisplayInfo(product: Product) {
   }
 }
 
-// Re-export from api-client for convenience
-export { isProductAvailable as isProductAvailableAPI } from './api-client'

@@ -48,9 +48,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: firebaseUser.email || '',
       firstName: nameParts[0] || '',
       lastName: nameParts.slice(1).join(' ') || '',
+      phone: '',
+      address: '',
+      city: '',
+      province: '',
+      postalCode: '',
+      country: '',
+      dateOfBirth: new Date(),
+      role: 2 as const,
+      isActive: true,
+      acceptedTerms: false,
+      authProvider: 'email' as const,
       photoURL: firebaseUser.photoURL || undefined,
       emailVerified: firebaseUser.emailVerified,
-      createdAt: new Date(firebaseUser.metadata.creationTime || Date.now())
+      orders: [],
+      totalSpent: 0,
+      createdAt: new Date(firebaseUser.metadata.creationTime || Date.now()),
+      updatedAt: new Date()
     }
   }
 
@@ -112,19 +126,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Reload user to get updated profile
       await firebaseUser.reload()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign up error:', error)
 
       // Handle specific Firebase errors
-      if (error.code === 'auth/email-already-in-use') {
-        throw new Error('Questo indirizzo email è già registrato')
-      } else if (error.code === 'auth/weak-password') {
-        throw new Error('La password deve essere di almeno 6 caratteri')
-      } else if (error.code === 'auth/invalid-email') {
-        throw new Error('Indirizzo email non valido')
-      } else {
-        throw new Error('Errore durante la registrazione')
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string }
+        if (firebaseError.code === 'auth/email-already-in-use') {
+          throw new Error('Questo indirizzo email è già registrato')
+        } else if (firebaseError.code === 'auth/weak-password') {
+          throw new Error('La password deve essere di almeno 6 caratteri')
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          throw new Error('Indirizzo email non valido')
+        }
       }
+      
+      throw new Error('Errore durante la registrazione')
     }
   }
 

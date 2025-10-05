@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Package, Clock, CheckCircle, XCircle, Truck, Calendar, Euro } from 'lucide-react'
@@ -76,7 +75,7 @@ function OrdersContent() {
                 className="text-secondary hover:text-gold mb-4"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Torna all'Account
+                Torna all&apos;Account
               </Button>
 
               <div className="flex items-center justify-between">

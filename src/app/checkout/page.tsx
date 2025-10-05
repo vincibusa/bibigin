@@ -19,7 +19,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { useCreateOrder, useOrderCalculations } from '@/hooks/use-orders'
 import { CartItem } from '@/lib/types'
 import { checkoutFormSchema, CheckoutFormData, defaultCheckoutForm } from '@/lib/validation-checkout'
-import { sendOrderEmails } from '@/lib/email-api'
+import { sendOrderEmails } from '@/lib/api-client'
 
 function CheckoutContent() {
   const router = useRouter()
@@ -50,7 +50,6 @@ function CheckoutContent() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
     setValue
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutFormSchema),
@@ -89,14 +88,11 @@ function CheckoutContent() {
 
       // Send order confirmation and admin notification emails
       try {
-        await sendOrderEmails({
-          orderId,
-          customer: {
-            firstName: data.shipping.firstName,
-            lastName: data.shipping.lastName,
-            email: data.email,
-            phone: data.shipping.phone
-          }
+        await sendOrderEmails(orderId, {
+          firstName: data.shipping.firstName,
+          lastName: data.shipping.lastName,
+          email: data.email,
+          phone: data.shipping.phone
         })
         console.log('Order emails sent successfully')
       } catch (emailError) {
@@ -244,7 +240,7 @@ function CheckoutContent() {
                       {...register('email')}
                     />
                     <p className="text-xs text-secondary/60 mt-1">
-                      Email dell'account utilizzato per l'accesso
+                      Email dell&apos;account utilizzato per l&apos;accesso
                     </p>
                     {errors.email && (
                       <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
@@ -347,7 +343,7 @@ function CheckoutContent() {
                   <CardTitle className="text-secondary">Note Aggiuntive</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Label htmlFor="notes" className="text-secondary">Note per l'ordine (opzionale)</Label>
+                  <Label htmlFor="notes" className="text-secondary">Note per l&apos;ordine (opzionale)</Label>
                   <textarea
                     id="notes"
                     rows={3}

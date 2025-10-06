@@ -13,7 +13,6 @@ import {
 import { db } from './firebase'
 import { Order, CartItem, ShippingAddress } from './types'
 import { calculateShippingCost } from './shipping'
-import { sendOrderEmails } from './api-client'
 
 const ORDERS_COLLECTION = 'orders'
 const PRODUCTS_COLLECTION = 'products'

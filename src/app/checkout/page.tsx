@@ -17,7 +17,8 @@ import { AuthGuard } from '@/components/auth/auth-guard'
 
 import { useAuth } from '@/contexts/auth-context'
 import { useCreateOrder, useOrderCalculations } from '@/hooks/use-orders'
-import { CartItem, Order } from '@/lib/types'
+import { CartItem } from '@/lib/types'
+import { Order } from '@/lib/api-client'
 import { checkoutFormSchema, CheckoutFormData, defaultCheckoutForm } from '@/lib/validation-checkout'
 import { sendOrderEmails } from '@/lib/api-client'
 
@@ -94,18 +95,35 @@ function CheckoutContent() {
         items: cartItems.map(item => ({
           productId: item.productId,
           name: item.name,
+          productName: item.name, // Per compatibilità gestionale
           price: item.price,
           quantity: item.quantity,
+          total: item.price * item.quantity, // Per compatibilità gestionale
           image: item.image
         })),
         shipping: data.shipping,
+        shippingAddress: {
+          street: data.shipping.street,
+          city: data.shipping.city,
+          state: '',
+          postalCode: data.shipping.postalCode,
+          country: data.shipping.country
+        },
+        billingAddress: {
+          street: data.shipping.street,
+          city: data.shipping.city,
+          state: '',
+          postalCode: data.shipping.postalCode,
+          country: data.shipping.country
+        },
         subtotal: subtotal,
         shipping_cost: shipping_cost,
         total: total,
         status: 'pending',
+        paymentMethod: 'manual',
         paymentStatus: 'pending',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         notes: data.notes || ''
       }
 

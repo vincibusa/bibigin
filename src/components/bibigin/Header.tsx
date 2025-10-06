@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/contexts/auth-context'
-
+import Link from 'next/link'
 interface HeaderProps {
   cartItemsCount?: number
   onCartOpen?: () => void
@@ -49,8 +49,10 @@ export function Header({ cartItemsCount = 0, onCartOpen }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-navy/10 backdrop-blur-md supports-[backdrop-filter]:bg-navy/10">
       <div className="container flex h-20 max-w-screen-2xl items-center justify-between px-4 mx-auto">
         {/* Logo */}
+        <Link href="/"> 
         <div className="flex items-center space-x-3 group cursor-pointer">
           <div className="relative">
+       
             <Image
               src="/logo.png"
               alt="BibiGin Logo"
@@ -58,13 +60,14 @@ export function Header({ cartItemsCount = 0, onCartOpen }: HeaderProps) {
               height={44}
               className="rounded-full transition-transform duration-300 group-hover:scale-110"
             />
+          
             <div className="absolute inset-0 rounded-full bg-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
           <span className="font-playfair text-2xl font-bold text-cream group-hover:text-gold transition-colors duration-300">
             BibiGin
           </span>
         </div>
-
+        </Link>
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (

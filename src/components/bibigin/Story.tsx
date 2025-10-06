@@ -147,39 +147,7 @@ export function Story() {
             </Card>
           </motion.div>
 
-          {/* Moon Phases Process */}
-          <motion.div variants={fadeInUp} className="space-y-8">
-            <h3 className="text-3xl font-playfair font-bold text-secondary">
-              Il Processo delle Quattro Lune
-            </h3>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {moonPhases.map((phase, idx) => (
-                <motion.div
-                  key={phase.name}
-                  variants={fadeInUp}
-                  transition={{ delay: 0.1 * idx }}
-                  className="text-center space-y-4"
-                >
-                  <div className="flex justify-center">
-                    <Image
-                      src={phase.image}
-                      alt={phase.name}
-                      width={80}
-                      height={80}
-                      className="w-20 h-20"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-gold">{phase.name}</h4>
-                    <p className="text-sm text-secondary/70 leading-relaxed">
-                      {phase.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+
 
           {/* Quote */}
           <motion.blockquote 

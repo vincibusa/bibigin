@@ -2,7 +2,8 @@ import { auth } from './firebase'
 import { calculateShippingCost } from './shipping'
 
 // Base URL for API requests
-const API_BASE_URL =  'https://gestionale--bibiginlacorte.europe-west4.hosted.app'
+//const API_BASE_URL =  'https://gestionale--bibiginlacorte.europe-west4.hosted.app'
+const API_BASE_URL ='http://localhost:3000'
 
 /**
  * Get Firebase ID token for authenticated requests
@@ -251,7 +252,7 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
 /**
  * Send order confirmation emails (customer + admin)
  */
-export async function sendOrderEmails(orderId: string, customer: {
+export async function sendOrderEmails(order: Order, customer: {
   firstName: string
   lastName: string
   email: string
@@ -260,7 +261,7 @@ export async function sendOrderEmails(orderId: string, customer: {
   try {
     await apiRequest('/api/emails/send-order-emails', {
       method: 'POST',
-      body: JSON.stringify({ orderId, customer })
+      body: JSON.stringify({ order, customer })
     })
   } catch (error) {
     console.error('Error sending order emails:', error)

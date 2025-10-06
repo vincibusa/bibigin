@@ -179,15 +179,9 @@ export async function createOrder(
     
     // Send confirmation emails (customer + admin)
     // This runs in background and doesn't block order creation
-    sendOrderEmails(orderId, {
-      firstName: shipping.firstName,
-      lastName: shipping.lastName,
-      email: customerEmail,
-      phone: shipping.phone
-    }).catch(error => {
-      console.error('Failed to send order emails:', error)
-      // Email failure is logged but doesn't fail the order
-    })
+    // Note: We'll need to fetch the order data separately for email sending
+    // For now, we'll skip email sending from this function to avoid the auth issue
+    // Emails will be sent from the checkout page after order creation
     
     return orderId
   } catch (error) {

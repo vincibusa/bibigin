@@ -17,7 +17,7 @@ import { AuthGuard } from '@/components/auth/auth-guard'
 
 import { useAuth } from '@/contexts/auth-context'
 import { useCreateOrder, useOrderCalculations } from '@/hooks/use-orders'
-import { CartItem } from '@/lib/types'
+import { CartItem, Order } from '@/lib/types'
 import { checkoutFormSchema, CheckoutFormData, defaultCheckoutForm } from '@/lib/validation-checkout'
 import { sendOrderEmails } from '@/lib/api-client'
 
@@ -86,9 +86,32 @@ function CheckoutContent() {
         data.notes
       )
 
+      // Build the complete order object for email sending
+      const order: Order = {
+        id: orderId,
+        customerId: user.id,
+        customerEmail: data.email,
+        items: cartItems.map(item => ({
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image
+        })),
+        shipping: data.shipping,
+        subtotal: subtotal,
+        shipping_cost: shipping_cost,
+        total: total,
+        status: 'pending',
+        paymentStatus: 'pending',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        notes: data.notes || ''
+      }
+
       // Send order confirmation and admin notification emails
       try {
-        await sendOrderEmails(orderId, {
+        await sendOrderEmails(order, {
           firstName: data.shipping.firstName,
           lastName: data.shipping.lastName,
           email: data.email,

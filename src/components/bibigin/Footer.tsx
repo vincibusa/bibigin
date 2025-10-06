@@ -96,26 +96,26 @@ export function Footer() {
             <p className="text-secondary/80 leading-relaxed mb-6 max-w-md">
               Gin delle Fasi Lunari - Un distillato artigianale premium che cattura
               l&apos;essenza dell&apos;astronomia in ogni sorso. Prodotto con passione sotto
-              il cielo stellato toscano.
+              il cielo stellato siciliano.
             </p>
 
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-secondary/70">
                 <Mail className="w-4 h-4 text-gold" />
-                <a href="mailto:info@bibigin.it" className="hover:text-gold transition-colors">
-                  info@bibigin.it
+                <a href="mailto:bibiginlacorte@gmail.com" className="hover:text-gold transition-colors">
+                  bibiginlacorte@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-3 text-secondary/70">
                 <Phone className="w-4 h-4 text-gold" />
-                <a href="tel:+393501234567" className="hover:text-gold transition-colors">
-                  +39 350 123 4567
+                <a href="tel:+393288583910" className="hover:text-gold transition-colors">
+                  +39 328 858 3910
                 </a>
               </div>
               <div className="flex items-center space-x-3 text-secondary/70">
                 <MapPin className="w-4 h-4 text-gold" />
-                <span>Toscana, Italia</span>
+                <span>Palermo, Italia</span>
               </div>
             </div>
           </motion.div>

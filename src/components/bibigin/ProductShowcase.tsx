@@ -196,31 +196,9 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
             <Separator />
 
-            {/* Botanicals */}
-            <div>
-              <h3 className="text-xl font-playfair font-semibold text-secondary mb-4">
-                {botanicals.length} Botanici Selezionati
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {botanicals.map((botanical, idx) => (
-                  <motion.div
-                    key={botanical}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.05 * idx }}
-                  >
-                    <Badge 
-                      className="w-full justify-center py-2 text-xs bg-secondary/20 text-secondary border border-secondary/30 hover:bg-secondary/30 transition-colors duration-200"
-                    >
-                      {botanical}
-                    </Badge>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
 
-            <Separator />
+
+          
 
             {/* Tasting Notes */}
             <div>

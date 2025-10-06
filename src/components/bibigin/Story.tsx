@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Moon, Stars, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import Image from 'next/image'
 
 export function Story() {
   const fadeInUp = {
@@ -35,10 +36,26 @@ export function Story() {
   const starPositions = generateStarPositions(30)
 
   const moonPhases = [
-    { name: 'Luna Nuova', icon: '🌑', description: 'Inizio del processo, raccolta dei botanici' },
-    { name: 'Primo Quarto', icon: '🌓', description: 'Macerazione delle erbe aromatiche' },
-    { name: 'Luna Piena', icon: '🌕', description: 'Distillazione sotto la luna piena' },
-    { name: 'Ultimo Quarto', icon: '🌗', description: 'Affinamento e imbottigliamento' }
+    { 
+      name: 'Luna Nuova', 
+      image: '/etichette aggiornate-1.png', 
+      description: 'Inizio del processo, raccolta dei botanici' 
+    },
+    { 
+      name: 'Primo Quarto', 
+      image: '/etichette aggiornate-2.png', 
+      description: 'Macerazione delle erbe aromatiche' 
+    },
+    { 
+      name: 'Luna Piena', 
+      image: '/etichette aggiornate-3.png', 
+      description: 'Distillazione sotto la luna piena' 
+    },
+    { 
+      name: 'Eclissi', 
+      image: '/etichette aggiornate-0.png', 
+      description: 'Affinamento e imbottigliamento' 
+    }
   ]
 
   return (
@@ -144,7 +161,15 @@ export function Story() {
                   transition={{ delay: 0.1 * idx }}
                   className="text-center space-y-4"
                 >
-                  <div className="text-6xl">{phase.icon}</div>
+                  <div className="flex justify-center">
+                    <Image
+                      src={phase.image}
+                      alt={phase.name}
+                      width={80}
+                      height={80}
+                      className="w-20 h-20"
+                    />
+                  </div>
                   <div className="space-y-2">
                     <h4 className="font-semibold text-gold">{phase.name}</h4>
                     <p className="text-sm text-secondary/70 leading-relaxed">

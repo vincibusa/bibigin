@@ -7,16 +7,18 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
-  updateProfile
+  updateProfile,
+  signInWithPopup
 } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
-import { auth, db } from '@/lib/firebase'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { auth, db, googleProvider } from '@/lib/firebase'
 import { User } from '@/lib/types'
 
 interface AuthContextType {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signUp: (
     email: string,
     password: string,
@@ -145,6 +147,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider)
+      const firebaseUser = result.user
+      
+      // Check if user document already exists
+      const userDocRef = doc(db, 'customers', firebaseUser.uid)
+      const userDocSnap = await getDoc(userDocRef)
+      
+      // If user document doesn't exist, create it
+      if (!userDocSnap.exists()) {
+        const displayName = firebaseUser.displayName || ''
+        const nameParts = displayName.split(' ')
+        const firstName = nameParts[0] || ''
+        const lastName = nameParts.slice(1).join(' ') || ''
+        
+        const now = new Date()
+        await setDoc(userDocRef, {
+          id: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          firstName: firstName,
+          lastName: lastName,
+          orders: [],
+          acceptedTerms: true,
+          acceptedPrivacy: true,
+          acceptedAge: true,
+          termsAcceptedAt: now,
+          privacyAcceptedAt: now,
+          authProvider: 'google',
+          photoURL: firebaseUser.photoURL || '',
+          createdAt: now,
+          updatedAt: now
+        })
+      }
+    } catch (error: unknown) {
+      console.error('Google sign in error:', error)
+      
+      // Handle specific Firebase errors
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string }
+        if (firebaseError.code === 'auth/popup-closed-by-user') {
+          throw new Error('Login annullato')
+        } else if (firebaseError.code === 'auth/popup-blocked') {
+          throw new Error('Popup bloccato dal browser. Abilita i popup per questo sito.')
+        }
+      }
+      
+      throw new Error('Errore durante il login con Google')
+    }
+  }
+
   // Sign out
   const signOut = async () => {
     try {
@@ -159,6 +213,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     loading,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
     isAuthenticated: !!user

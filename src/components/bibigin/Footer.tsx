@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-react'
+import { Mail, Phone, MapPin, Instagram } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 
 export function Footer() {
@@ -28,9 +28,8 @@ export function Footer() {
   const starPositions = generateStarPositions(20)
 
   const socialLinks = [
-    { icon: Instagram, href: '#', name: 'Instagram' },
-    { icon: Facebook, href: '#', name: 'Facebook' },
-    { icon: Twitter, href: '#', name: 'Twitter' }
+    { icon: Instagram, href: 'https://www.instagram.com/bibigin_lacorte?igsh=MTd6eHlxaDhudTVlMw%3D%3D&utm_source=qr', name: 'BibiGin La Corte' },
+    { icon: Instagram, href: 'https://www.instagram.com/bibicake_official?igsh=b3VlaXR3aTZteTRk&utm_source=qr', name: 'BibicAke Official' }
   ]
 
   const quickLinks = [

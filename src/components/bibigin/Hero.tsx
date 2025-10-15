@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Product } from '@/lib/types'
@@ -163,10 +164,11 @@ export function Hero({ product, onAddToCart, onScrollToProduct, isAvailable = tr
             {/* Product Bottle Image */}
             <div className="relative w-64 h-96 rounded-lg overflow-hidden backdrop-blur-sm border border-secondary/30">
               {product.imageUrl || (product.images && product.images.length > 0) ? (
-                <img 
+                <Image
                   src={product.imageUrl || product.images[0]} 
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-secondary/40 flex items-center justify-center">

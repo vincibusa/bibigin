@@ -2,6 +2,7 @@
 
 import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { CheckCircle, Package, CreditCard, Clock, Home } from 'lucide-react'
 
@@ -139,13 +140,12 @@ function CheckoutSuccessContent() {
                 {order.items.map((item, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
-                      <img 
-                        src={item.image} 
+                      <Image
+                        src={item.image || '/logo.png'} 
                         alt={item.name}
-                        className="w-8 h-8 object-cover rounded"
-                        onError={(e) => {
-                          e.currentTarget.src = '/logo.png'
-                        }}
+                        width={32}
+                        height={32}
+                        className="object-cover rounded"
                       />
                     </div>
                     <div className="flex-1">

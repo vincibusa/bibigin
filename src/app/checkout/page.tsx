@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
@@ -211,13 +212,12 @@ function CheckoutContent() {
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-secondary/10 rounded-lg flex items-center justify-center">
-                      <img 
-                        src={item.image} 
+                      <Image
+                        src={item.image || '/logo.png'} 
                         alt={item.name}
-                        className="w-12 h-12 object-cover rounded"
-                        onError={(e) => {
-                          e.currentTarget.src = '/logo.png'
-                        }}
+                        width={48}
+                        height={48}
+                        className="object-cover rounded"
                       />
                     </div>
                     <div className="flex-1">

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { Moon, Stars, Zap } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import Image from 'next/image'
 
 export function Story() {
   const fadeInUp = {
@@ -34,29 +33,6 @@ export function Story() {
   }
 
   const starPositions = generateStarPositions(30)
-
-  const moonPhases = [
-    { 
-      name: 'Luna Nuova', 
-      image: '/etichette aggiornate-1.png', 
-      description: 'Inizio del processo, raccolta dei botanici' 
-    },
-    { 
-      name: 'Primo Quarto', 
-      image: '/etichette aggiornate-2.png', 
-      description: 'Macerazione delle erbe aromatiche' 
-    },
-    { 
-      name: 'Luna Piena', 
-      image: '/etichette aggiornate-3.png', 
-      description: 'Distillazione sotto la luna piena' 
-    },
-    { 
-      name: 'Eclissi', 
-      image: '/etichette aggiornate-0.png', 
-      description: 'Affinamento e imbottigliamento' 
-    }
-  ]
 
   return (
     <section id="story" className="py-20 bg-navy-gradient relative overflow-hidden">
@@ -106,9 +82,8 @@ export function Story() {
             </h2>
             
             <p className="text-xl text-cream/80 leading-relaxed max-w-3xl mx-auto">
-              BibiGin nasce da una passione profonda per l&apos;astronomia e l&apos;arte della distillazione. 
-              Ogni bottiglia cattura l&apos;essenza delle fasi lunari attraverso un processo artigianale 
-              che rispetta i ritmi celesti.
+       
+            Un gin dal carattere raffinato, dove la freschezza delle botaniche incontra una delicata anima floreale. Un bouquet armonioso che avvolge i sensi con morbide sfumature di petali e leggere note erbacee, per un’esperienza sensoriale elegante e sofisticata.
             </p>
           </motion.div>
 

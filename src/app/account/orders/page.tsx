@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Package, Clock, CheckCircle, XCircle, Truck, Calendar, Euro } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -167,13 +168,12 @@ function OrdersContent() {
                               >
                                 <div className="flex items-center space-x-3">
                                   <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
-                                    <img
-                                      src={item.image}
+                                    <Image
+                                      src={item.image || '/logo.png'}
                                       alt={item.name}
-                                      className="w-10 h-10 object-cover rounded"
-                                      onError={(e) => {
-                                        e.currentTarget.src = '/logo.png'
-                                      }}
+                                      width={40}
+                                      height={40}
+                                      className="object-cover rounded"
                                     />
                                   </div>
                                   <div>

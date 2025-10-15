@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Minus, Plus, X, ShoppingBag, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -99,8 +100,19 @@ export function CartDrawer({
                   className="bg-card/10 backdrop-blur-sm border border-secondary/20 rounded-lg p-4 hover:border-gold/40 transition-colors"
                 >
                   <div className="flex items-start space-x-4">
-                    <div className="w-16 h-20 bg-gradient-to-b from-secondary/20 to-secondary/40 rounded-lg flex items-center justify-center border border-secondary/30">
-                      <span className="text-2xl">🍶</span>
+                    <div className="relative w-16 h-20 bg-gradient-to-b from-secondary/20 to-secondary/40 rounded-lg overflow-hidden border border-secondary/30">
+                      {item.image ? (
+                        <Image
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-2xl">🍶</span>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex-1 space-y-2">

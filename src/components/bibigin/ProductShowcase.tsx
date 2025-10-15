@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Star, Award, Leaf, Shield } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -36,19 +37,12 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
   const starPositions = generateStarPositions(30)
 
-  // Use botanicals from product or fallback to default
-  const botanicals = product.botanicals || [
-    'Ginepro Toscano', 'Coriandolo', 'Angelica', 'Iris',
-    'Cardamomo', 'Cannella', 'Scorza di Limone', 'Lavanda',
-    'Rosmarino', 'Timo', 'Bacche di Rosa', 'Stelle Alpine'
-  ]
-
-  // Use tasting notes from product or fallback to default
-  const tastingNotes = product.tastingNotes || [
-    { phase: 'Luna Nuova', note: 'Note fresche di ginepro e agrumi' },
-    { phase: 'Primo Quarto', note: 'Spezie delicate, coriandolo e cardamomo' },
-    { phase: 'Luna Piena', note: 'Complessità erbacea, lavanda e rosmarino' },
-    { phase: 'Ultimo Quarto', note: 'Finale persistente con iris e bacche di rosa' }
+  // Lunar phases with moon icons
+  const lunarPhases = [
+    { phase: 'Luna Nuova', icon: '🌑' },
+    { phase: 'Primo Quarto', icon: '🌓' },
+    { phase: 'Luna Piena', icon: '🌕' },
+    { phase: 'Ultimo Quarto', icon: '🌗' }
   ]
 
   return (
@@ -88,12 +82,13 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
           >
             <div className="relative">
               {/* Main Product Image */}
-              <div className="aspect-[3/4] rounded-2xl overflow-hidden border border-secondary/30 backdrop-blur-sm">
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-secondary/30 backdrop-blur-sm">
                 {product.imageUrl || (product.images && product.images.length > 0) ? (
-                  <img 
+                  <Image
                     src={product.imageUrl || product.images[0]} 
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-secondary/40 flex items-center justify-center">
@@ -200,30 +195,25 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
           
 
-            {/* Tasting Notes */}
+            {/* Lunar Phases */}
             <div>
               <h3 className="text-xl font-playfair font-semibold text-secondary mb-6">
-                Note di Degustazione
+                Le Fasi Lunari
               </h3>
-              <div className="space-y-4">
-                {tastingNotes.map((note, idx) => (
+              <div className="grid grid-cols-2 gap-4">
+                {lunarPhases.map((lunar, idx) => (
                   <motion.div
-                    key={note.phase}
+                    key={lunar.phase}
                     variants={fadeInUp}
                     initial="initial"
                     whileInView="animate"
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * idx }}
                   >
-                    <Card className="bg-card/10 backdrop-blur-sm border-secondary/20 hover:border-gold/40 transition-all duration-300 hover:bg-card/20">
-                      <CardContent className="p-4">
-                        <div className="flex items-start space-x-3">
-                          <div className="w-3 h-3 rounded-full bg-gold mt-2 flex-shrink-0" />
-                          <div>
-                            <h4 className="font-medium text-secondary">{note.phase}</h4>
-                            <p className="text-sm text-secondary/70 mt-1">{note.note}</p>
-                          </div>
-                        </div>
+                    <Card className="bg-card/10 backdrop-blur-sm border-secondary/20 hover:border-gold/40 transition-all duration-300 hover:bg-card/20 hover:scale-105">
+                      <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
+                        <div className="text-6xl">{lunar.icon}</div>
+                        <h4 className="font-medium text-secondary text-sm">{lunar.phase}</h4>
                       </CardContent>
                     </Card>
                   </motion.div>

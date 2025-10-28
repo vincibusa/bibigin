@@ -8,7 +8,7 @@ export interface ShippingCost {
 /**
  * Calculate shipping cost based on number of bottles
  * Rules:
- * - Up to 2 bottles: €6
+ * - Up to 2 bottles: €5
  * - 3 to 6 bottles: €9
  * - 7 to 9 bottles: €12
  * - 10+ bottles: €15 (or custom pricing)
@@ -19,7 +19,7 @@ export function calculateShippingCost(bottleQuantity: number): number {
   }
 
   if (bottleQuantity <= 2) {
-    return 6
+    return 5
   }
 
   if (bottleQuantity <= 6) {
@@ -48,7 +48,7 @@ export function getShippingBreakdown(bottleQuantity: number): ShippingCost {
  * Shipping tiers for reference/display
  */
 export const SHIPPING_TIERS = [
-  { minBottles: 1, maxBottles: 2, cost: 6 },
+  { minBottles: 1, maxBottles: 2, cost: 5 },
   { minBottles: 3, maxBottles: 6, cost: 9 },
   { minBottles: 7, maxBottles: 9, cost: 12 },
   { minBottles: 10, maxBottles: Infinity, cost: 15 }

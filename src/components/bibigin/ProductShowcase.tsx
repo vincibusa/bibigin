@@ -37,12 +37,13 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
   const starPositions = generateStarPositions(30)
 
-  // Lunar phases with moon icons
+  // Lunar phases with moon images
   const lunarPhases = [
-    { phase: 'Luna Nuova', icon: '🌑' },
-    { phase: 'Primo Quarto', icon: '🌓' },
-    { phase: 'Luna Piena', icon: '🌕' },
-    { phase: 'Ultimo Quarto', icon: '🌗' }
+    { phase: 'Luna Nuova', image: '/luna-01.png' },
+    { phase: 'Primo Quarto', image: '/luna-02.png' },
+    { phase: 'Luna Piena', image: '/luna-03.png' },
+    { phase: 'Ultimo Quarto', image: '/luna-04.png' },
+    { phase: 'Luna Gibbosa', image: '/luna-05.png' }
   ]
 
   return (
@@ -200,7 +201,7 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
               <h3 className="text-xl font-playfair font-semibold text-secondary mb-6">
                 Le Fasi Lunari
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {lunarPhases.map((lunar, idx) => (
                   <motion.div
                     key={lunar.phase}
@@ -212,7 +213,13 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
                   >
                     <Card className="bg-card/10 backdrop-blur-sm border-secondary/20 hover:border-gold/40 transition-all duration-300 hover:bg-card/20 hover:scale-105">
                       <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
-                        <div className="text-6xl">{lunar.icon}</div>
+                        <div className="w-16 h-16 flex items-center justify-center">
+                          <img 
+                            src={lunar.image} 
+                            alt={lunar.phase}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
                         <h4 className="font-medium text-secondary text-sm">{lunar.phase}</h4>
                       </CardContent>
                     </Card>

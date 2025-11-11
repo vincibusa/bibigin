@@ -39,11 +39,11 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
   // Lunar phases with moon images
   const lunarPhases = [
-    { phase: 'Luna Nuova', image: '/luna-01.png' },
+    { phase: 'Luna Piena', image: '/luna-01.png' },
     { phase: 'Primo Quarto', image: '/luna-02.png' },
-    { phase: 'Luna Piena', image: '/luna-03.png' },
-    { phase: 'Ultimo Quarto', image: '/luna-04.png' },
-    { phase: 'Luna Gibbosa', image: '/luna-05.png' }
+    { phase: 'Ultimo Quarto', image: '/luna-02.png', mirrored: true },
+    { phase: 'Luna Crescente', image: '/luna-04.png' },
+    { phase: 'Eclissi', image: '/luna-03.png' }
   ]
 
   return (
@@ -211,13 +211,14 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * idx }}
                   >
-                    <Card className="bg-card/10 backdrop-blur-sm border-secondary/20 hover:border-gold/40 transition-all duration-300 hover:bg-card/20 hover:scale-105">
+                    <Card className="bg-card/10 backdrop-blur-sm border-0 transition-all duration-300 hover:bg-card/20 hover:scale-105">
                       <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
                         <div className="w-16 h-16 flex items-center justify-center">
                           <img 
                             src={lunar.image} 
                             alt={lunar.phase}
                             className="w-full h-full object-contain"
+                            style={lunar.mirrored ? { transform: 'scaleX(-1)' } : undefined}
                           />
                         </div>
                         <h4 className="font-medium text-secondary text-sm">{lunar.phase}</h4>

@@ -244,6 +244,15 @@ export function Footer() {
             © 2024 BibiGin. Tutti i diritti riservati. | P.IVA: IT12345678901
           </div>
 
+          {/* Company Information */}
+          <div className="text-secondary/60 text-xs text-center max-w-4xl mx-auto space-y-1">
+            <div><strong>Indirizzo sede:</strong> Via S.P. 131, 41, 90046</div>
+            <div><strong>PEC:</strong> benignalacorte@postecert.it</div>
+            <div><strong>Codice fiscale e n.iscr. al registro imprese:</strong> LCRBGN93D42G273E</div>
+            <div><strong>Forma giuridica:</strong> impresa individuale</div>
+            <div><strong>Titolare di impresa individuale:</strong> La Corte Benigna</div>
+          </div>
+
           <div className="text-secondary/60 text-sm text-center font-semibold">
             🔞 Bevi responsabilmente | Vietato ai minori di 18 anni
           </div>

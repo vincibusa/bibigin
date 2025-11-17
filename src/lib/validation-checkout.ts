@@ -55,7 +55,11 @@ export const checkoutFormSchema = z.object({
   
   acceptPrivacy: z.boolean()
     .refine(val => val === true, 'Devi accettare la privacy policy'),
-  
+
+  // Age confirmation
+  confirmAge: z.boolean()
+    .refine(val => val === true, 'Devi confermare di essere maggiorenne'),
+
   // Newsletter subscription (optional)
   subscribeNewsletter: z.boolean()
 })
@@ -80,6 +84,7 @@ export const defaultCheckoutForm: CheckoutFormData = {
   notes: '',
   acceptTerms: false,
   acceptPrivacy: false,
+  confirmAge: false,
   subscribeNewsletter: false
 }
 

@@ -440,6 +440,21 @@ function CheckoutContent() {
                       <p className="text-red-500 text-sm">{errors.acceptPrivacy.message}</p>
                     )}
 
+                    <div className="flex items-start space-x-2">
+                      <input
+                        type="checkbox"
+                        id="confirmAge"
+                        className="mt-1 h-4 w-4 text-gold focus:ring-gold border-secondary/30 rounded"
+                        {...register('confirmAge')}
+                      />
+                      <Label htmlFor="confirmAge" className="text-sm text-secondary cursor-pointer">
+                        Confermo di essere maggiorenne (18+) *
+                      </Label>
+                    </div>
+                    {errors.confirmAge && (
+                      <p className="text-red-500 text-sm">{errors.confirmAge.message}</p>
+                    )}
+
                     {error && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                         <p className="text-red-700 text-sm">{error}</p>

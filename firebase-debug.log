@@ -1,0 +1,114 @@
+[debug] [2025-12-04T08:55:23.926Z] ----------------------------------------------------------------------
+[debug] [2025-12-04T08:55:23.928Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy
+[debug] [2025-12-04T08:55:23.928Z] CLI Version:   14.7.0
+[debug] [2025-12-04T08:55:23.928Z] Platform:      darwin
+[debug] [2025-12-04T08:55:23.928Z] Node Version:  v22.14.0
+[debug] [2025-12-04T08:55:23.928Z] Time:          Thu Dec 04 2025 09:55:23 GMT+0100 (Central European Standard Time)
+[debug] [2025-12-04T08:55:23.928Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-12-04T08:55:23.929Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-12-04T08:55:24.029Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-04T08:55:24.029Z] > authorizing via signed-in user (catanzaroepartners@gmail.com)
+[debug] [2025-12-04T08:55:24.029Z] [iam] checking project bibiginlacorte for permissions ["firebase.projects.get",null]
+[debug] [2025-12-04T08:55:24.030Z] Checked if tokens are valid: false, expires at: 1763557093240
+[debug] [2025-12-04T08:55:24.030Z] Checked if tokens are valid: false, expires at: 1763557093240
+[debug] [2025-12-04T08:55:24.030Z] > refreshing access token with scopes: []
+[debug] [2025-12-04T08:55:24.030Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-12-04T08:55:24.030Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-04T08:55:24.206Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-12-04T08:55:24.206Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-12-04T08:55:24.217Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:testIamPermissions [none]
+[debug] [2025-12-04T08:55:24.217Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:testIamPermissions x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:24.217Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:testIamPermissions {"permissions":["firebase.projects.get",null]}
+[debug] [2025-12-04T08:55:24.384Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-12-04T08:55:24.384Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2025-12-04T08:55:25.073Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:testIamPermissions 200
+[debug] [2025-12-04T08:55:25.073Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-12-04T08:55:25.073Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project bibiginlacorte:
+
+  
+[info] 
+[info] === Deploying to 'bibiginlacorte'...
+[info] 
+[info] i  deploying apphosting 
+[debug] [2025-12-04T08:55:25.076Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:25.076Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:25.076Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/firebaseapphosting.googleapis.com [none]
+[debug] [2025-12-04T08:55:25.077Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/firebaseapphosting.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.413Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/firebaseapphosting.googleapis.com 200
+[debug] [2025-12-04T08:55:26.413Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:26.413Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.413Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.413Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:26.414Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/developerconnect.googleapis.com [none]
+[debug] [2025-12-04T08:55:26.415Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/developerconnect.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.417Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudbuild.googleapis.com [none]
+[debug] [2025-12-04T08:55:26.417Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudbuild.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.420Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/secretmanager.googleapis.com [none]
+[debug] [2025-12-04T08:55:26.420Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/secretmanager.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.422Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/run.googleapis.com [none]
+[debug] [2025-12-04T08:55:26.422Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/run.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.424Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/artifactregistry.googleapis.com [none]
+[debug] [2025-12-04T08:55:26.424Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/artifactregistry.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.427Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/iam.googleapis.com [none]
+[debug] [2025-12-04T08:55:26.427Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/iam.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:26.787Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/developerconnect.googleapis.com 200
+[debug] [2025-12-04T08:55:26.787Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/developerconnect.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:27.448Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/secretmanager.googleapis.com 200
+[debug] [2025-12-04T08:55:27.448Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/secretmanager.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:27.454Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudbuild.googleapis.com 200
+[debug] [2025-12-04T08:55:27.454Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudbuild.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:27.456Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/iam.googleapis.com 200
+[debug] [2025-12-04T08:55:27.456Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/iam.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:27.462Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/run.googleapis.com 200
+[debug] [2025-12-04T08:55:27.462Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/run.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:27.479Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/artifactregistry.googleapis.com 200
+[debug] [2025-12-04T08:55:27.479Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/artifactregistry.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:27.479Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:27.480Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:27.480Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/bibiginlacorte/serviceAccounts/firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-12-04T08:55:27.480Z] >>> [apiv2][(partial)header] POST https://iam.googleapis.com/v1/projects/bibiginlacorte/serviceAccounts/firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com:testIamPermissions x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:27.480Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/bibiginlacorte/serviceAccounts/firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-12-04T08:55:28.345Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/bibiginlacorte/serviceAccounts/firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-12-04T08:55:28.346Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/bibiginlacorte/serviceAccounts/firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-12-04T08:55:28.346Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:28.346Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:28.346Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:getIamPolicy [none]
+[debug] [2025-12-04T08:55:28.618Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:getIamPolicy 200
+[debug] [2025-12-04T08:55:28.618Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte:getIamPolicy {"version":1,"etag":"BwZAPR2aqSY=","bindings":[{"role":"roles/artifactregistry.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-artifactregistry.iam.gserviceaccount.com"]},{"role":"roles/cloudaicompanion.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-cloudaicompanion.iam.gserviceaccount.com"]},{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:855780980251@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-855780980251@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-855780980251@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/developerconnect.readTokenAccessor","members":["serviceAccount:firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:855780980251-compute@developer.gserviceaccount.com","serviceAccount:855780980251@cloudservices.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-855780980251@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@bibiginlacorte.iam.gserviceaccount.com","serviceAccount:firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.computeRunner","members":["serviceAccount:firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/firebaseapphosting.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-firebaseapphosting.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-855780980251@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-855780980251@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:catanzaroepartners@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-855780980251@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/secretmanager.admin_withcond_4d733694f87705f55d53","members":["serviceAccount:service-855780980251@gcp-sa-devconnect.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@bibiginlacorte.iam.gserviceaccount.com"]},{"role":"roles/storage.objectViewer","members":["serviceAccount:firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com"]}]}
+[debug] [2025-12-04T08:55:28.619Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:28.619Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:28.619Z] >>> [apiv2][query] GET https://firebaseapphosting.googleapis.com/v1beta/projects/bibiginlacorte/locations/-/backends 
+[debug] [2025-12-04T08:55:29.204Z] <<< [apiv2][status] GET https://firebaseapphosting.googleapis.com/v1beta/projects/bibiginlacorte/locations/-/backends 200
+[debug] [2025-12-04T08:55:29.204Z] <<< [apiv2][body] GET https://firebaseapphosting.googleapis.com/v1beta/projects/bibiginlacorte/locations/-/backends {"backends":[{"name":"projects/bibiginlacorte/locations/europe-west4/backends/gestionale","createTime":"2025-09-28T17:32:25.959197694Z","updateTime":"2025-11-11T15:01:30.306297Z","labels":{"deployment-tool":"cli-firebase"},"uri":"gestionale--bibiginlacorte.europe-west4.hosted.app","managedResources":[{"runService":{"service":"projects/855780980251/locations/europe-west4/services/gestionale"}}],"uid":"c4cdaffd-10fb-4118-a7c7-4f1bb65044e3","etag":"nwcglnd6vvwXSK94qjubdFOkaPcRoFVSRt0gvg3FP-4","reconciling":false,"servingLocality":"GLOBAL_ACCESS","serviceAccount":"firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com","appId":"1:855780980251:web:a7faca9fd662fc67f66abe"},{"name":"projects/bibiginlacorte/locations/europe-west4/backends/bibiginlacorte","createTime":"2025-09-26T13:19:56.599264978Z","updateTime":"2025-11-17T16:43:25.158450Z","labels":{"deployment-tool":"cli-firebase"},"uri":"bibiginlacorte--bibiginlacorte.europe-west4.hosted.app","managedResources":[{"runService":{"service":"projects/855780980251/locations/europe-west4/services/bibiginlacorte"}}],"uid":"b9409a16-b868-4c1e-8016-b306720bbdf9","etag":"AsX3-lPMahV7pyrfhhqlJhp_7erQwLojR6mq2KidYD8","reconciling":false,"servingLocality":"GLOBAL_ACCESS","serviceAccount":"firebase-app-hosting-compute@bibiginlacorte.iam.gserviceaccount.com","appId":"1:855780980251:web:93f9f41f1878285af66abe"}]}
+[info] i  apphosting: Found backend(s) bibiginlacorte 
+[debug] [2025-12-04T08:55:29.206Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:29.207Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:29.207Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2025-12-04T08:55:29.207Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudresourcemanager.googleapis.com x-goog-quota-user=projects/bibiginlacorte
+[debug] [2025-12-04T08:55:29.573Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudresourcemanager.googleapis.com 200
+[debug] [2025-12-04T08:55:29.573Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bibiginlacorte/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2025-12-04T08:55:29.573Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:29.574Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:29.574Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte [none]
+[debug] [2025-12-04T08:55:29.785Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte 200
+[debug] [2025-12-04T08:55:29.786Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/bibiginlacorte {"projectNumber":"855780980251","projectId":"bibiginlacorte","lifecycleState":"ACTIVE","name":"bibiginlacorte","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-09-26T13:11:44.708980Z"}
+[debug] [2025-12-04T08:55:29.786Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:29.786Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:29.786Z] >>> [apiv2][query] GET https://storage.googleapis.com/storage/v1/b/firebaseapphosting-sources-855780980251-europe-west4 [none]
+[debug] [2025-12-04T08:55:29.971Z] <<< [apiv2][status] GET https://storage.googleapis.com/storage/v1/b/firebaseapphosting-sources-855780980251-europe-west4 200
+[debug] [2025-12-04T08:55:29.971Z] <<< [apiv2][body] GET https://storage.googleapis.com/storage/v1/b/firebaseapphosting-sources-855780980251-europe-west4 {"kind":"storage#bucket","selfLink":"https://www.googleapis.com/storage/v1/b/firebaseapphosting-sources-855780980251-europe-west4","id":"firebaseapphosting-sources-855780980251-europe-west4","name":"firebaseapphosting-sources-855780980251-europe-west4","projectNumber":"855780980251","generation":"1758893117491394702","metageneration":"1","location":"EUROPE-WEST4","storageClass":"STANDARD","etag":"CAE=","timeCreated":"2025-09-26T13:25:17.926Z","updated":"2025-09-26T13:25:17.926Z","lifecycle":{"rule":[{"action":{"type":"Delete"},"condition":{"age":30}}]},"softDeletePolicy":{"retentionDurationSeconds":"604800","effectiveTime":"2025-09-26T13:25:17.926Z"},"iamConfiguration":{"bucketPolicyOnly":{"enabled":false},"uniformBucketLevelAccess":{"enabled":false},"publicAccessPrevention":"inherited"},"locationType":"region","satisfiesPZI":true}
+[info] i  apphosting: Uploading source code at /Users/vincibusa/Desktop/bibigin for backend bibiginlacorte... 
+[debug] [2025-12-04T08:55:30.879Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:30.879Z] Checked if tokens are valid: true, expires at: 1764842123206
+[debug] [2025-12-04T08:55:30.879Z] >>> [apiv2][query] PUT https://storage.googleapis.com/firebaseapphosting-sources-855780980251-europe-west4/bibiginlacorte--29289-oyvteXZ0BLXr-.zip [none]
+[debug] [2025-12-04T08:55:30.879Z] >>> [apiv2][body] PUT https://storage.googleapis.com/firebaseapphosting-sources-855780980251-europe-west4/bibiginlacorte--29289-oyvteXZ0BLXr-.zip [stream]

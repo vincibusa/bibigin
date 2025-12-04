@@ -130,4 +130,28 @@
     background-color: oklch(0.78 0.16 85);
     color: var(--navy);
   }
+  
+  /* Hide scrollbar for thumbnail gallery */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+  
+  /* Smooth scrolling for mobile thumbnails */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .snap-center {
+    scroll-snap-align: center;
+  }
+  
+  .snap-mandatory {
+    scroll-snap-type: x mandatory;
+  }
 }

@@ -1,7 +1,8 @@
 'use client'
 
+import { useState, useMemo } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Star, Award, Leaf, Shield } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -16,6 +17,36 @@ interface ProductShowcaseProps {
 }
 
 export function ProductShowcase({ product, onAddToCart, isAvailable = true }: ProductShowcaseProps) {
+  // Get all available images
+  const allImages = useMemo(() => {
+    const images: string[] = []
+    
+    // Add imageUrl if it exists
+    if (product.imageUrl) {
+      images.push(product.imageUrl)
+    }
+    
+    // Add images array if it exists and has items
+    if (product.images && product.images.length > 0) {
+      // Avoid duplicates
+      product.images.forEach(img => {
+        if (img && !images.includes(img)) {
+          images.push(img)
+        }
+      })
+    }
+    
+    return images
+  }, [product.imageUrl, product.images])
+
+  // State for selected image index
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+
+  // Get current selected image
+  const selectedImage = allImages[selectedImageIndex] || allImages[0] || '/logo.png'
+
+  // Check if we have multiple images to show thumbnails
+  const hasMultipleImages = allImages.length > 1
   const fadeInUp = {
     initial: { opacity: 0, y: 40 },
     animate: { opacity: 1, y: 0 },
@@ -47,7 +78,7 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
   ]
 
   return (
-    <section id="product" className="py-20 bg-cosmic-gradient relative overflow-hidden">
+    <section id="product" className="py-12 sm:py-16 lg:py-20 bg-cosmic-gradient relative overflow-hidden">
       {/* Animated Stars Background */}
       <div className="absolute inset-0">
         {starPositions.map((star, i) => (
@@ -71,42 +102,90 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
         ))}
       </div>
 
-      <div className="container relative z-10 mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-16 items-start max-w-7xl mx-auto">
+      <div className="container relative z-10 mx-auto px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start max-w-7xl mx-auto">
           {/* Product Image */}
           <motion.div 
-            className="sticky top-24"
+            className="lg:sticky lg:top-24 order-1 lg:order-none"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="relative">
+            <div className="relative space-y-3 sm:space-y-4">
               {/* Main Product Image */}
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-secondary/30 backdrop-blur-sm">
-                {product.imageUrl || (product.images && product.images.length > 0) ? (
-                  <Image
-                    src={product.imageUrl || product.images[0]} 
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-secondary/40 flex items-center justify-center">
-                    <div className="text-center text-secondary">
-                      <div className="text-8xl mb-4">🍶</div>
-                      <div className="text-lg">BibiGin - Bottiglia Premium</div>
-                      <div className="text-sm opacity-70">Gin delle Fasi Lunari</div>
-                    </div>
-                  </div>
-                )}
+              <div className="relative aspect-[3/4] sm:aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden border border-secondary/30 backdrop-blur-sm w-full max-w-md mx-auto lg:max-w-none">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedImageIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0"
+                  >
+                    {selectedImage ? (
+                      <Image
+                        src={selectedImage} 
+                        alt={`${product.name} - Immagine ${selectedImageIndex + 1}`}
+                        fill
+                        className="object-cover"
+                        priority={selectedImageIndex === 0}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-b from-secondary/20 to-secondary/40 flex items-center justify-center">
+                        <div className="text-center text-secondary">
+                          <div className="text-6xl sm:text-8xl mb-4">🍶</div>
+                          <div className="text-base sm:text-lg">BibiGin - Bottiglia Premium</div>
+                          <div className="text-xs sm:text-sm opacity-70">Gin delle Fasi Lunari</div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
+              {/* Thumbnails Gallery */}
+              {hasMultipleImages && (
+                <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2 snap-x snap-mandatory">
+                  {allImages.map((image, index) => (
+                    <motion.button
+                      key={index}
+                      onClick={() => setSelectedImageIndex(index)}
+                      className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 transition-all duration-300 snap-center ${
+                        selectedImageIndex === index
+                          ? 'border-gold shadow-lg shadow-gold/30 scale-105'
+                          : 'border-secondary/30 active:border-secondary/60 active:scale-95'
+                      }`}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Image
+                        src={image}
+                        alt={`${product.name} - Thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, 96px"
+                      />
+                      {selectedImageIndex === index && (
+                        <motion.div
+                          className="absolute inset-0 bg-gold/20"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.2 }}
+                        />
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+
               {/* Floating Badge */}
-              <div className="absolute -top-4 -right-4">
-                <Badge className="bg-gold text-navy px-4 py-2 text-sm font-semibold border-0">
-                  <Award className="w-4 h-4 mr-2" />
-                  Edizione Limitata
+              <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 z-10">
+                <Badge className="bg-gold text-navy px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold border-0">
+                  <Award className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Edizione Limitata</span>
+                  <span className="sm:hidden">Limitata</span>
                 </Badge>
               </div>
             </div>
@@ -114,17 +193,17 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
           {/* Product Details */}
           <motion.div 
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8 order-2 lg:order-none"
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             {/* Header */}
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-playfair font-bold text-secondary">
+            <div className="space-y-3 sm:space-y-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-bold text-secondary">
                 {product.name}
-                <span className="block text-2xl text-gold font-medium mt-2">
+                <span className="block text-xl sm:text-2xl text-gold font-medium mt-1 sm:mt-2">
                   Gin delle Fasi Lunari
                 </span>
               </h2>
@@ -133,28 +212,28 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
               <div className="flex items-center space-x-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-gold text-gold" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-gold text-gold" />
                   ))}
                 </div>
-                <span className="text-sm text-secondary/70">(47 recensioni)</span>
+                <span className="text-xs sm:text-sm text-secondary/70">(47 recensioni)</span>
               </div>
 
-              <p className="text-lg text-secondary leading-relaxed">
+              <p className="text-base sm:text-lg text-secondary leading-relaxed">
                 {product.description || "Un gin artigianale premium che cattura l'essenza delle fasi lunari attraverso una selezione di 12 botanici pregiati, distillati con metodi tradizionali sotto il cielo stellato toscano."}
               </p>
             </div>
 
             {/* Price */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-baseline space-x-4">
-                <span className="text-4xl font-bold text-secondary">€{product.price}</span>
+                <span className="text-3xl sm:text-4xl font-bold text-secondary">€{product.price}</span>
               </div>
               
               <Button 
                 size="lg" 
                 onClick={onAddToCart}
                 disabled={!isAvailable}
-                className="w-full bg-gold hover:bg-gold/90 text-navy font-semibold text-lg py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gold hover:bg-gold/90 text-navy font-semibold text-base sm:text-lg py-5 sm:py-6 transition-all duration-300 active:scale-95 hover:shadow-lg hover:shadow-gold/20 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isAvailable ? 'Aggiungi al Carrello' : 'Non Disponibile'}
               </Button>
@@ -163,7 +242,7 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
             <Separator />
 
             {/* Product Features */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6">
               {[
                 { icon: Shield, label: 'Stock', value: `${product.stock} disponibili` },
                 { icon: Leaf, label: 'Volume', value: `${product.bottleSize}L` },
@@ -177,14 +256,14 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
                   whileInView="animate"
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 * idx }}
-                  className="flex items-center space-x-3"
+                  className="flex items-center space-x-2 sm:space-x-3"
                 >
-                  <div className="p-2 bg-gold/10 rounded-lg">
-                    <feature.icon className="w-5 h-5 text-gold" />
+                  <div className="p-1.5 sm:p-2 bg-gold/10 rounded-lg">
+                    <feature.icon className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
                   </div>
                   <div>
-                    <div className="font-semibold text-secondary">{feature.value}</div>
-                    <div className="text-sm text-secondary">{feature.label}</div>
+                    <div className="font-semibold text-sm sm:text-base text-secondary">{feature.value}</div>
+                    <div className="text-xs sm:text-sm text-secondary">{feature.label}</div>
                   </div>
                 </motion.div>
               ))}
@@ -198,10 +277,10 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
 
             {/* Lunar Phases */}
             <div>
-              <h3 className="text-xl font-playfair font-semibold text-secondary mb-6">
+              <h3 className="text-lg sm:text-xl font-playfair font-semibold text-secondary mb-4 sm:mb-6">
                 Le Fasi Lunari
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                 {lunarPhases.map((lunar, idx) => (
                   <motion.div
                     key={lunar.phase}
@@ -211,9 +290,9 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * idx }}
                   >
-                    <Card className="bg-card/10 backdrop-blur-sm border-0 transition-all duration-300 hover:bg-card/20 hover:scale-105">
-                      <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
-                        <div className="w-16 h-16 flex items-center justify-center">
+                    <Card className="bg-card/10 backdrop-blur-sm border-0 transition-all duration-300 active:bg-card/20 active:scale-95">
+                      <CardContent className="p-4 sm:p-6 flex flex-col items-center justify-center text-center space-y-2 sm:space-y-3">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
                           <img 
                             src={lunar.image} 
                             alt={lunar.phase}
@@ -221,7 +300,7 @@ export function ProductShowcase({ product, onAddToCart, isAvailable = true }: Pr
                             style={lunar.mirrored ? { transform: 'scaleX(-1)' } : undefined}
                           />
                         </div>
-                        <h4 className="font-medium text-secondary text-sm">{lunar.phase}</h4>
+                        <h4 className="font-medium text-secondary text-xs sm:text-sm">{lunar.phase}</h4>
                       </CardContent>
                     </Card>
                   </motion.div>
